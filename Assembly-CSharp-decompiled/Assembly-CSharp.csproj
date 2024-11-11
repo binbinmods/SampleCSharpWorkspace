@@ -1,0 +1,427 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003" ToolsVersion="Current">
+  <!--Project was exported from assembly: D:\Steam Games\steamapps\common\Across the Obelisk\AcrossTheObelisk_Data\Managed\Assembly-CSharp.dll-->
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProjectGuid>{3EB325CE-9533-46A1-A6E1-E53223BA321B}</ProjectGuid>
+    <OutputType>Library</OutputType>
+    <AssemblyName>Assembly-CSharp</AssemblyName>
+    <ApplicationVersion>0.0.0.0</ApplicationVersion>
+    <FileUpgradeFlags>
+    </FileUpgradeFlags>
+    <UpgradeBackupLocation>
+    </UpgradeBackupLocation>
+    <OldToolsVersion>2.0</OldToolsVersion>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>bin\Debug\</OutputPath>
+    <DefineConstants>DEBUG;TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <PlatformTarget>AnyCPU</PlatformTarget>
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>bin\Release\</OutputPath>
+    <DefineConstants>TRACE</DefineConstants>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Reference Include="Facepunch.Steamworks.Win64">
+      <HintPath>lib\Facepunch.Steamworks.Win64.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>lib\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="Photon3Unity3D">
+      <HintPath>lib\Photon3Unity3D.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonChat">
+      <HintPath>lib\PhotonChat.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonRealtime">
+      <HintPath>lib\PhotonRealtime.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonUnityNetworking">
+      <HintPath>lib\PhotonUnityNetworking.dll</HintPath>
+    </Reference>
+    <Reference Include="PhotonUnityNetworking.Utilities">
+      <HintPath>lib\PhotonUnityNetworking.Utilities.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.InputSystem">
+      <HintPath>lib\Unity.InputSystem.dll</HintPath>
+    </Reference>
+    <Reference Include="Unity.TextMeshPro">
+      <HintPath>lib\Unity.TextMeshPro.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AnimationModule">
+      <HintPath>lib\UnityEngine.AnimationModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.AudioModule">
+      <HintPath>lib\UnityEngine.AudioModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.CoreModule">
+      <HintPath>lib\UnityEngine.CoreModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.InputLegacyModule">
+      <HintPath>lib\UnityEngine.InputLegacyModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.JSONSerializeModule">
+      <HintPath>lib\UnityEngine.JSONSerializeModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.ParticleSystemModule">
+      <HintPath>lib\UnityEngine.ParticleSystemModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.Physics2DModule">
+      <HintPath>lib\UnityEngine.Physics2DModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.PhysicsModule">
+      <HintPath>lib\UnityEngine.PhysicsModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.SpriteMaskModule">
+      <HintPath>lib\UnityEngine.SpriteMaskModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.TextRenderingModule">
+      <HintPath>lib\UnityEngine.TextRenderingModule.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UI">
+      <HintPath>lib\UnityEngine.UI.dll</HintPath>
+    </Reference>
+    <Reference Include="UnityEngine.UIModule">
+      <HintPath>lib\UnityEngine.UIModule.dll</HintPath>
+    </Reference>
+    <Reference Include="netstandard">
+      <HintPath>lib\netstandard.dll</HintPath>
+    </Reference>
+  </ItemGroup>
+  <ItemGroup>
+    <Compile Include="All1ShaderDemoController.cs" />
+    <Compile Include="Demo2AutoScroll.cs" />
+    <Compile Include="DemoCamera.cs" />
+    <Compile Include="DemoCircleExpositor.cs" />
+    <Compile Include="DemoItem.cs" />
+    <Compile Include="DemoRandomColorSwap.cs" />
+    <Compile Include="AllIn1Shader.cs" />
+    <Compile Include="RandomSeed.cs" />
+    <Compile Include="SetAtlasUvs.cs" />
+    <Compile Include="BotonAdvancedCraft.cs" />
+    <Compile Include="BotonFilter.cs" />
+    <Compile Include="BotonMenuGameMode.cs" />
+    <Compile Include="BotonScore.cs" />
+    <Compile Include="BotonSupply.cs" />
+    <Compile Include="botTownUpgrades.cs" />
+    <Compile Include="CardPlayerManager.cs" />
+    <Compile Include="CardPlayerPairsManager.cs" />
+    <Compile Include="ChallengeBossBanners.cs" />
+    <Compile Include="ChallengeMadness.cs" />
+    <Compile Include="ChallengeSelectionManager.cs" />
+    <Compile Include="ChallengeSelectionManager2.cs" />
+    <Compile Include="CharacterMeter.cs" />
+    <Compile Include="CharacterWindowUI.cs" />
+    <Compile Include="CinematicControl.cs" />
+    <Compile Include="ConflictManager.cs" />
+    <Compile Include="CorruptionManager.cs" />
+    <Compile Include="DeckEnergy.cs" />
+    <Compile Include="DeckSlot.cs" />
+    <Compile Include="EmoteCharacterPing.cs" />
+    <Compile Include="EmoteManager.cs" />
+    <Compile Include="EmoteSmall.cs" />
+    <Compile Include="EmoteTarget.cs" />
+    <Compile Include="EventBag.cs" />
+    <Compile Include="GiveManager.cs" />
+    <Compile Include="ItemCombatIcon.cs" />
+    <Compile Include="KeyboardManager.cs" />
+    <Compile Include="LevelWindowUI.cs" />
+    <Compile Include="MadnessManager.cs" />
+    <Compile Include="MapLegend.cs" />
+    <Compile Include="OnTouchDown.cs" />
+    <Compile Include="PerkNode.cs" />
+    <Compile Include="PerkNodeAmplify.cs" />
+    <Compile Include="PopTutorialManager.cs" />
+    <Compile Include="PopupHPBar.cs" />
+    <Compile Include="PerkBackgroundRow.cs" />
+    <Compile Include="ProgressionRow.cs" />
+    <Compile Include="ProgressManager.cs" />
+    <Compile Include="RandomHeroSelector.cs" />
+    <Compile Include="SandboxManager.cs" />
+    <Compile Include="Score.cs" />
+    <Compile Include="AlertManager.cs" />
+    <Compile Include="AtOManager.cs" />
+    <Compile Include="AudioManager.cs" />
+    <Compile Include="Aura.cs" />
+    <Compile Include="AuraCurseData.cs" />
+    <Compile Include="Buff.cs" />
+    <Compile Include="CameraManager.cs" />
+    <Compile Include="BotonCardback.cs" />
+    <Compile Include="CardbackData.cs" />
+    <Compile Include="CardCraftItem.cs" />
+    <Compile Include="CardCraftManager.cs" />
+    <Compile Include="CardCraftSelectorEnergy.cs" />
+    <Compile Include="CardCraftSelectorRarity.cs" />
+    <Compile Include="CardVertical.cs" />
+    <Compile Include="CardPlayerPackData.cs" />
+    <Compile Include="CardPlayerPairsPackData.cs" />
+    <Compile Include="Card.cs" />
+    <Compile Include="CardData.cs" />
+    <Compile Include="CardItem.cs" />
+    <Compile Include="SkillForLog.cs" />
+    <Compile Include="SkillLog.cs" />
+    <Compile Include="CardScreenManager.cs" />
+    <Compile Include="ChallengeData.cs" />
+    <Compile Include="ChallengeTrait.cs" />
+    <Compile Include="Character.cs" />
+    <Compile Include="CharacterGOItem.cs" />
+    <Compile Include="CharacterItem.cs" />
+    <Compile Include="CharacterUnlock.cs" />
+    <Compile Include="ChatManager.cs" />
+    <Compile Include="CinematicData.cs" />
+    <Compile Include="CinematicManager.cs" />
+    <Compile Include="CastResolutionForCombatText.cs" />
+    <Compile Include="LogItem.cs" />
+    <Compile Include="RoomList.cs" />
+    <Compile Include="CombatData.cs" />
+    <Compile Include="CombatEffect.cs" />
+    <Compile Include="Console.cs" />
+    <Compile Include="ControllerManager.cs" />
+    <Compile Include="CursorArrow.cs" />
+    <Compile Include="DamageMeterManager.cs" />
+    <Compile Include="DeckManager.cs" />
+    <Compile Include="DeckPile.cs" />
+    <Compile Include="Effects.cs" />
+    <Compile Include="EffectsManager.cs" />
+    <Compile Include="EventManager.cs" />
+    <Compile Include="EventData.cs" />
+    <Compile Include="EventItemTrack.cs" />
+    <Compile Include="EventReplyData.cs" />
+    <Compile Include="EventRequirementData.cs" />
+    <Compile Include="EventTrack.cs" />
+    <Compile Include="Reply.cs" />
+    <Compile Include="FinishRunManager.cs" />
+    <Compile Include="GameManager.cs" />
+    <Compile Include="GlobalLog.cs" />
+    <Compile Include="Enums.cs" />
+    <Compile Include="Globals.cs" />
+    <Compile Include="Texts.cs" />
+    <Compile Include="DeckInHero.cs" />
+    <Compile Include="Hero.cs" />
+    <Compile Include="HeroCards.cs" />
+    <Compile Include="HeroData.cs" />
+    <Compile Include="HeroItem.cs" />
+    <Compile Include="BotHeroChar.cs" />
+    <Compile Include="BoxPlayer.cs" />
+    <Compile Include="BoxSelection.cs" />
+    <Compile Include="CharPopup.cs" />
+    <Compile Include="CharPopupClose.cs" />
+    <Compile Include="HeroSelection.cs" />
+    <Compile Include="TraitRollOver.cs" />
+    <Compile Include="HeroSelectionManager.cs" />
+    <Compile Include="InitiativePortrait.cs" />
+    <Compile Include="ActionsController.cs" />
+    <Compile Include="InputController.cs" />
+    <Compile Include="IntroNewGameManager.cs" />
+    <Compile Include="Item.cs" />
+    <Compile Include="ItemData.cs" />
+    <Compile Include="KeyNotesData.cs" />
+    <Compile Include="LobbyManager.cs" />
+    <Compile Include="LogEntry.cs" />
+    <Compile Include="LogResult.cs" />
+    <Compile Include="CharacterLoot.cs" />
+    <Compile Include="Loot.cs" />
+    <Compile Include="LootData.cs" />
+    <Compile Include="LootItem.cs" />
+    <Compile Include="LootManager.cs" />
+    <Compile Include="MainMenuManager.cs" />
+    <Compile Include="MapManager.cs" />
+    <Compile Include="Node.cs" />
+    <Compile Include="NodeData.cs" />
+    <Compile Include="NodeEditorName.cs" />
+    <Compile Include="NodesConnectedRequirement.cs" />
+    <Compile Include="PopupNode.cs" />
+    <Compile Include="SlashEffect.cs" />
+    <Compile Include="MatchManager.cs" />
+    <Compile Include="MouseCursor.cs" />
+    <Compile Include="NetworkManager.cs" />
+    <Compile Include="NewTurn.cs" />
+    <Compile Include="AI.cs" />
+    <Compile Include="AICards.cs" />
+    <Compile Include="NPC.cs" />
+    <Compile Include="NPCData.cs" />
+    <Compile Include="NPCItem.cs" />
+    <Compile Include="TierRewardData.cs" />
+    <Compile Include="OptionsManager.cs" />
+    <Compile Include="CorruptionPackData.cs" />
+    <Compile Include="PackData.cs" />
+    <Compile Include="ParticleArrow.cs" />
+    <Compile Include="FinishProgression.cs" />
+    <Compile Include="Perk.cs" />
+    <Compile Include="PerkChallengeItem.cs" />
+    <Compile Include="PerkColumn.cs" />
+    <Compile Include="PerkColumnItem.cs" />
+    <Compile Include="PerkData.cs" />
+    <Compile Include="PerkNodeData.cs" />
+    <Compile Include="PerkSlot.cs" />
+    <Compile Include="PerkTree.cs" />
+    <Compile Include="PlayerManager.cs" />
+    <Compile Include="PlayerStatus.cs" />
+    <Compile Include="PlayerStatusManager.cs" />
+    <Compile Include="PlayerUIManager.cs" />
+    <Compile Include="PopupManager.cs" />
+    <Compile Include="PopupText.cs" />
+    <Compile Include="CharacterReward.cs" />
+    <Compile Include="RewardsManager.cs" />
+    <Compile Include="GameData.cs" />
+    <Compile Include="GameTurnData.cs" />
+    <Compile Include="PlayerData.cs" />
+    <Compile Include="PlayerDeck.cs" />
+    <Compile Include="PlayerPerk.cs" />
+    <Compile Include="PlayerRun.cs" />
+    <Compile Include="SaveManager.cs" />
+    <Compile Include="SaveText.cs" />
+    <Compile Include="SceneStatic.cs" />
+    <Compile Include="SettingsManager.cs" />
+    <Compile Include="BotonSkin.cs" />
+    <Compile Include="SkinData.cs" />
+    <Compile Include="SubClassData.cs" />
+    <Compile Include="TeamManagement.cs" />
+    <Compile Include="RoundThermometer.cs" />
+    <Compile Include="ThermometerData.cs" />
+    <Compile Include="ThermometerPiece.cs" />
+    <Compile Include="ThermometerTierData.cs" />
+    <Compile Include="TomeManager.cs" />
+    <Compile Include="TomeManagerScene.cs" />
+    <Compile Include="TomeButton.cs" />
+    <Compile Include="TomeCard.cs" />
+    <Compile Include="TomeEdge.cs" />
+    <Compile Include="TomeNumber.cs" />
+    <Compile Include="TownManager.cs" />
+    <Compile Include="Trait.cs" />
+    <Compile Include="TraitData.cs" />
+    <Compile Include="TreasureRun.cs" />
+    <Compile Include="BotonDeck.cs" />
+    <Compile Include="BotonEndTurn.cs" />
+    <Compile Include="BotonGeneric.cs" />
+    <Compile Include="BotonRollover.cs" />
+    <Compile Include="CombatTarget.cs" />
+    <Compile Include="CombatText.cs" />
+    <Compile Include="CombatTextInstance.cs" />
+    <Compile Include="DeckWindowUI.cs" />
+    <Compile Include="EnergyPoint.cs" />
+    <Compile Include="ItemsWindowUI.cs" />
+    <Compile Include="MenuButton.cs" />
+    <Compile Include="MenuSaveButton.cs" />
+    <Compile Include="OpenHyperlinks.cs" />
+    <Compile Include="OverCharacter.cs" />
+    <Compile Include="OverCharacterDeck.cs" />
+    <Compile Include="PerksWindowUI.cs" />
+    <Compile Include="Popup.cs" />
+    <Compile Include="PopupAuraCurse.cs" />
+    <Compile Include="PopupSheet.cs" />
+    <Compile Include="Rollover.cs" />
+    <Compile Include="SideCharacters.cs" />
+    <Compile Include="StatsWindowUI.cs" />
+    <Compile Include="TextFade.cs" />
+    <Compile Include="TitleMovement.cs" />
+    <Compile Include="Translate.cs" />
+    <Compile Include="UIAddcardSelector.cs" />
+    <Compile Include="UICombatDeath.cs" />
+    <Compile Include="UIDeckCards.cs" />
+    <Compile Include="UIDiscardSelector.cs" />
+    <Compile Include="UIEnergySelector.cs" />
+    <Compile Include="AnimatedCurveObject.cs" />
+    <Compile Include="CameraShake.cs" />
+    <Compile Include="CardCreator.cs" />
+    <Compile Include="ConsoleToGUI.cs" />
+    <Compile Include="CurvedLinePoint.cs" />
+    <Compile Include="CurvedLineRenderer.cs" />
+    <Compile Include="CycleColor.cs" />
+    <Compile Include="DontDestroy.cs" />
+    <Compile Include="FadingLight.cs" />
+    <Compile Include="Floating.cs" />
+    <Compile Include="Functions.cs" />
+    <Compile Include="IListExtensions.cs" />
+    <Compile Include="ItemCreator.cs" />
+    <Compile Include="JsonHelper.cs" />
+    <Compile Include="LineSmoother.cs" />
+    <Compile Include="ScrollRectAutoScroll.cs" />
+    <Compile Include="SimplerAES.cs" />
+    <Compile Include="SpriteOutline.cs" />
+    <Compile Include="WeeklySelector.cs" />
+    <Compile Include="ZoneData.cs" />
+    <Compile Include="SetSpriteLayerFromBase.cs" />
+    <Compile Include="BlurRenderer.cs" />
+    <Compile Include="StealthHide.cs" />
+    <Compile Include="SteamManager.cs" />
+    <Compile Include="ChatController.cs" />
+    <Compile Include="EnvMapAnimator.cs" />
+    <Compile Include="Thunder.cs" />
+    <Compile Include="TomeRun.cs" />
+    <Compile Include="TomeRunDetails.cs" />
+    <Compile Include="TomeTravelPlace.cs" />
+    <Compile Include="TownBuilding.cs" />
+    <Compile Include="TownUpgradeWindow.cs" />
+    <Compile Include="TrailerManager.cs" />
+    <Compile Include="TrailerPoster.cs" />
+    <Compile Include="TraitLevel.cs" />
+    <Compile Include="UnlockedBar.cs" />
+    <Compile Include="WhiteSquare.cs" />
+    <Compile Include="UnitySourceGeneratedAssemblyMonoScriptTypes_v1.cs" />
+    <Compile Include="Photon\Realtime\Demo\ConnectAndJoinRandomLb.cs" />
+    <Compile Include="Photon\Chat\Demo\AppSettingsExtensions.cs" />
+    <Compile Include="Photon\Chat\Demo\ChannelSelector.cs" />
+    <Compile Include="Photon\Chat\Demo\ChatAppIdCheckerUI.cs" />
+    <Compile Include="Photon\Chat\Demo\ChatGui.cs" />
+    <Compile Include="Photon\Chat\Demo\FriendItem.cs" />
+    <Compile Include="Photon\Chat\Demo\IgnoreUiRaycastWhenInactive.cs" />
+    <Compile Include="Photon\Chat\Demo\NamePickGui.cs" />
+    <Compile Include="Photon\Chat\UtilityScripts\EventSystemSpawner.cs" />
+    <Compile Include="Photon\Chat\UtilityScripts\OnStartDelete.cs" />
+    <Compile Include="Photon\Chat\UtilityScripts\TextButtonTransition.cs" />
+    <Compile Include="Photon\Chat\UtilityScripts\TextToggleIsOnTransition.cs" />
+    <Compile Include="TMPro\TMP_DigitValidator.cs" />
+    <Compile Include="TMPro\TMP_PhoneNumberValidator.cs" />
+    <Compile Include="TMPro\TMP_TextEventHandler.cs" />
+    <Compile Include="TMPro\Examples\Benchmark01.cs" />
+    <Compile Include="TMPro\Examples\Benchmark01_UGUI.cs" />
+    <Compile Include="TMPro\Examples\Benchmark02.cs" />
+    <Compile Include="TMPro\Examples\Benchmark03.cs" />
+    <Compile Include="TMPro\Examples\Benchmark04.cs" />
+    <Compile Include="TMPro\Examples\CameraController.cs" />
+    <Compile Include="TMPro\Examples\ObjectSpin.cs" />
+    <Compile Include="TMPro\Examples\ShaderPropAnimator.cs" />
+    <Compile Include="TMPro\Examples\SimpleScript.cs" />
+    <Compile Include="TMPro\Examples\SkewTextExample.cs" />
+    <Compile Include="TMPro\Examples\TeleType.cs" />
+    <Compile Include="TMPro\Examples\TextConsoleSimulator.cs" />
+    <Compile Include="TMPro\Examples\TextMeshProFloatingText.cs" />
+    <Compile Include="TMPro\Examples\TextMeshSpawner.cs" />
+    <Compile Include="TMPro\Examples\TMPro_InstructionOverlay.cs" />
+    <Compile Include="TMPro\Examples\TMP_ExampleScript_01.cs" />
+    <Compile Include="TMPro\Examples\TMP_FrameRateCounter.cs" />
+    <Compile Include="TMPro\Examples\TMP_TextEventCheck.cs" />
+    <Compile Include="TMPro\Examples\TMP_TextInfoDebugTool.cs" />
+    <Compile Include="TMPro\Examples\TMP_TextSelector_A.cs" />
+    <Compile Include="TMPro\Examples\TMP_TextSelector_B.cs" />
+    <Compile Include="TMPro\Examples\TMP_UiFrameRateCounter.cs" />
+    <Compile Include="TMPro\Examples\VertexColorCycler.cs" />
+    <Compile Include="TMPro\Examples\VertexJitter.cs" />
+    <Compile Include="TMPro\Examples\VertexShakeA.cs" />
+    <Compile Include="TMPro\Examples\VertexShakeB.cs" />
+    <Compile Include="TMPro\Examples\VertexZoom.cs" />
+    <Compile Include="TMPro\Examples\WarpTextExample.cs" />
+    <Compile Include="ProfanityFilter\AllowList.cs" />
+    <Compile Include="ProfanityFilter\ProfanityBase.cs" />
+    <Compile Include="ProfanityFilter\ProfanityFilter.cs" />
+    <Compile Include="ProfanityFilter\Interfaces\IAllowList.cs" />
+    <Compile Include="ProfanityFilter\Interfaces\IProfanityFilter.cs" />
+    <Compile Include="AllIn1SpriteShader\SetGlobalTime.cs" />
+    <Compile Include="AssemblyInfo.cs" />
+  </ItemGroup>
+  <Import Project="$(MSBuildBinPath)\Microsoft.CSharp.targets" />
+</Project>
