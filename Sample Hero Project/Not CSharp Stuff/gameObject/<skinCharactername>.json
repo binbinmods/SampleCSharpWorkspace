@@ -1,0 +1,8 @@
+{
+    "NewGameObjectID": "<ID of the object. Does not need to match the filename. Example - skinulfvitr>",
+    "BaseGameObjectID": "<Base game object that will be the model for your character. Example - gorio>",
+    "SpriteToUse": "<Leave blank if not changing the sprite. If changing the sprite, use the skin sprite from the sprite folder.>",
+    "ScaleX": 1.0,
+    "ScaleY": 1.0,
+    "Flip": true
+}

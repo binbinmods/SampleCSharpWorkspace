@@ -1,0 +1,15 @@
+{
+    "Card0": "<first starting card (for OC) in pack. Example - ulfvitrwatersoflife>",
+    "Card1": "<second starting card in pack. Example - healingrain>",
+    "Card2": "<second starting card in pack. Example - heal>",
+    "Card3": "<second starting card in pack. Example - zap>",
+    "Card4": "<second starting card in pack. Example - chargebattery>",
+    "Card5": "",
+    "CardSpecial0": "",
+    "CardSpecial1": "",
+    "PackClass": "<Primary class of associated hero. Example - Healer>",
+    "PackID": "<ID of the pack. Must match the filename and the packname in <subclass>.json. Example - ulfvitr>",
+    "PackName": "<Hero's name. Example - Ulfvitr>",
+    "PerkList": [],
+    "RequiredClass": "<subclassID associated with the Hero. Example - stormshaman>"
+}

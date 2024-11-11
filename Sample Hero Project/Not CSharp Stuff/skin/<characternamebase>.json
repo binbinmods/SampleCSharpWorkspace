@@ -1,0 +1,15 @@
+{
+    "BaseSkin": true,
+    "PerkLevel": 0,
+    "SkinGO": "<ID of the game object. Should match the NewGameObjectID of the gameObject in the gameObject folder. Example - skinulfvitr>",
+    "SkinID": "<ID of the skin. Should match filename. Example - stormshamanbase>",
+    "SkinName": "<Name of the skin as it appears when selecting skins. Example - Wolf Wars Magnus>",
+    "SkinOrder": 0,
+    "SkinSubclass": "<subclass associated with the skin. Example - stormshaman>",
+    "Sku": "",
+    "SpritePortrait": "<Sprite for the in combat portrait. AndrinPortrait>",
+    "SpritePortraitGrande": "<Sprite for the map portrait. Example - AndrinPortraitGrande>",
+    "SpriteSilueta": "<Sprite for the hero selection portrait. Example - AndrinSilueta>",
+    "SpriteSiluetaGrande": "<Sprite for the in combat reward portrait. Example - AndrinSiluetaGrande>",
+    "SteamStat": ""
+}

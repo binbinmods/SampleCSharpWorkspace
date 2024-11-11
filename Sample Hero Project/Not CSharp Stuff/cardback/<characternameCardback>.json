@@ -1,0 +1,15 @@
+{
+    "AdventureLevel": 0,
+    "BaseCardback": true,
+    "CardbackID": "<ID of the cardback. Should match the filename. Examplee - ulfvitrCardback>",
+    "CardbackName": "<Name that appears when selecting the cardback. Example - Default>",
+    "CardbackOrder": 1000,
+    "CardbackSprite": "<Name of the sprite. Should be in the sprite folder. Example - CardBackHealMage>",
+    "CardbackSubclass": "<Name of the associated subclass. Example - stormshaman>",
+    "Locked": false,
+    "ObeliskLevel": 0,
+    "RankLevel": 0,
+    "ShowIfLocked": false,
+    "Sku": "",
+    "SteamStat": ""
+}
