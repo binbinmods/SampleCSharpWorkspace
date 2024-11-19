@@ -36,7 +36,7 @@ namespace SamplePlugin{
         public static ConfigEntry<bool> SampleBooleanConfig { get; set; }
         public static ConfigEntry<int> SampleIntegerConfig { get; set; }
 
-        internal const int ModDate = 20241023;
+        internal const int ModDate = ModDate = int.Parse(DateTime.Today.ToString("yyyyMMdd"));;
         private readonly Harmony harmony = new(PluginInfo.PLUGIN_GUID);
         internal static ManualLogSource Log;
         private void Awake()
