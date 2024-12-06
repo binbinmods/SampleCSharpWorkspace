@@ -39,6 +39,9 @@ namespace SamplePlugin{
         internal const int ModDate = int.Parse(DateTime.Today.ToString("yyyyMMdd"));;
         private readonly Harmony harmony = new(PluginInfo.PLUGIN_GUID);
         internal static ManualLogSource Log;
+
+        public static string debugBase = PluginInfo.PLUGIN_GUID;
+
         private void Awake()
         {
 
@@ -63,6 +66,19 @@ namespace SamplePlugin{
 
             // apply patches
             harmony.PatchAll();
+        }
+
+        internal static void LogDebug(string msg)
+        {
+            Log.LogDebug(debugBase + msg);
+        }
+        internal static void LogInfo(string msg)
+        {
+            Log.LogInfo(debugBase + msg);
+        }
+        internal static void LogError(string msg)
+        {
+            Log.LogError(debugBase + msg);
         }
     }
 }
