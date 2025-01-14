@@ -7,6 +7,8 @@ using Obeliskial_Essentials;
 using System.IO;
 using static UnityEngine.Mathf;
 using UnityEngine.TextCore.LowLevel;
+using static SamplePlugin.Plugin;
+using System.Collections.ObjectModel;
 
 namespace SamplePlugin
 {
@@ -15,7 +17,7 @@ namespace SamplePlugin
         /// <summary>
         /// This is just used to help find the debugging
         /// </summary>
-        public static string debugBase = "<RenameThis>";
+        // public static string debugBase = "<RenameThis>";
 
         /// <summary>
         /// This is used as the base when naming perks in a perk mod. Ignore if you aren't making a perk mod/using this syntax.
@@ -240,7 +242,7 @@ namespace SamplePlugin
                 _character.AuracurseImmune.Add(immunity);
         }
 
-        public static void IncreaseChargesByStacks(string auraCurseToModify, float stacks_per_bonus, string auraCurseDependent, ref Character _character, string traitName)
+        public static void IncreaseChargesByStacks(string auraCurseToModify, float stacks_per_bonus, string auraCurseDependent, ref Character _character)
         {
             // increases the amount of ACtoModify that by. 
             // For instance if you want to increase the amount of burn you apply by 1 per 10 stacks of spark, then IncreaseChargesByStacks("burn",10,"spark",..)
@@ -352,13 +354,13 @@ namespace SamplePlugin
         /// <param name="reduceThis">Card type to rduce</param>
         /// <param name="whenYouPlayThis"> Card type to trigger the effect</param>
         /// <param name="amountToReduce"> Amount of energy reduction per time this triggers</param>
-        /// <param name="traitName"> Trait this is attributed to</param>
-        public static void PermanentyReduceXWhenYouPlayY(ref Character _character, ref CardData _castedCard, Enums.CardType reduceThis, Enums.CardType whenYouPlayThis, int amountToReduce, string traitName)
+        /// <param name="_trait"> Trait this is attributed to</param>
+        public static void PermanentyReduceXWhenYouPlayY(ref Character _character, ref CardData _castedCard, Enums.CardType reduceThis, Enums.CardType whenYouPlayThis, int amountToReduce, string _trait)
         {
             if (!((Object)MatchManager.Instance != (Object)null) || !((Object)_castedCard != (Object)null))
                 return;
-            TraitData traitData = Globals.Instance.GetTraitData(traitName);
-            if (MatchManager.Instance.activatedTraits != null && MatchManager.Instance.activatedTraits.ContainsKey(traitName) && MatchManager.Instance.activatedTraits[traitName] > traitData.TimesPerTurn - 1)
+            TraitData traitData = Globals.Instance.GetTraitData(_trait);
+            if (MatchManager.Instance.activatedTraits != null && MatchManager.Instance.activatedTraits.ContainsKey(_trait) && MatchManager.Instance.activatedTraits[_trait] > traitData.TimesPerTurn - 1)
                 return;
 
             if (!_castedCard.GetCardTypes().Contains(whenYouPlayThis))
@@ -390,16 +392,16 @@ namespace SamplePlugin
                 }
             }
 
-            if (!MatchManager.Instance.activatedTraits.ContainsKey(traitName))
-                MatchManager.Instance.activatedTraits.Add(traitName, 1);
+            if (!MatchManager.Instance.activatedTraits.ContainsKey(_trait))
+                MatchManager.Instance.activatedTraits.Add(_trait, 1);
             else
-                ++MatchManager.Instance.activatedTraits[traitName];
+                ++MatchManager.Instance.activatedTraits[_trait];
 
             CardData selectedCard = cardDataList[MatchManager.Instance.GetRandomIntRange(0, cardDataList.Count, "trait")];
             selectedCard.EnergyReductionPermanent += amountToReduce;
             MatchManager.Instance.GetCardFromTableByIndex(selectedCard.InternalId).ShowEnergyModification(-amountToReduce);
             MatchManager.Instance.UpdateHandCards();
-            _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + traitName) + TextChargesLeft(MatchManager.Instance.activatedTraits[traitName], traitData.TimesPerTurn), Enums.CombatScrollEffectType.Trait);
+            _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + _trait) + TextChargesLeft(MatchManager.Instance.activatedTraits[_trait], traitData.TimesPerTurn), Enums.CombatScrollEffectType.Trait);
             MatchManager.Instance.CreateLogCardModification(selectedCard.InternalId, MatchManager.Instance.GetHero(_character.HeroIndex));
         }
 
@@ -882,21 +884,30 @@ namespace SamplePlugin
         /// <param name="traitData">The Trait we are incrementing</param>
         public static void IncrementTraitActivations(TraitData traitData)
         {
-            string _trait = traitData.Id;
-            if (!CanIncrementTraitActivations(traitData))
-                return;
-
-            if (!MatchManager.Instance.activatedTraits.ContainsKey(_trait))
+            string traitId = traitData.Id;
+            if (!MatchManager.Instance.activatedTraits.ContainsKey(traitId))
             {
-                MatchManager.Instance.activatedTraits.Add(_trait, 1);
+                MatchManager.Instance.activatedTraits.Add(traitId, 1);
             }
             else
             {
                 Dictionary<string, int> activatedTraits = MatchManager.Instance.activatedTraits;
-                activatedTraits[_trait] = activatedTraits[_trait] + 1;
+                activatedTraits[traitId] = activatedTraits[traitId] + 1;
             }
             MatchManager.Instance.SetTraitInfoText();
         }
+
+        /// <summary>
+        /// Checks to see if a trait can be incremented. If so, it increments it.
+        /// </summary>
+        /// <param name="traitId">The Id of the trait we are incrementing</param>
+        public static void IncrementTraitActivations(string traitId)
+        {
+            TraitData traitData = Globals.Instance.GetTraitData(traitId);
+            IncrementTraitActivations(traitData);
+        }
+
+
 
         /// <summary>
         /// Checks to see if you can increment a Trait's activations
@@ -904,14 +915,44 @@ namespace SamplePlugin
         /// <param name="traitData">The Trait we are checking</param>
         public static bool CanIncrementTraitActivations(TraitData traitData)
         {
-            string _trait = traitData.Id;
-            if (!((UnityEngine.Object)MatchManager.Instance != (UnityEngine.Object)null))
+            LogDebug("canIncrementTraitActivations");
+            if (traitData==null)
+            {
                 return false;
-            if (MatchManager.Instance.activatedTraits != null && MatchManager.Instance.activatedTraits.ContainsKey(_trait) && MatchManager.Instance.activatedTraits[_trait] > traitData.TimesPerTurn - 1)
+            }
+            string traitId = traitData.Id;
+            if ((UnityEngine.Object)MatchManager.Instance == (UnityEngine.Object)null)
+            {
                 return false;
+            }
+            if (MatchManager.Instance.activatedTraits == null)
+            {
+                return false;
+            }
+            if ( MatchManager.Instance.activatedTraits.ContainsKey(traitId) && MatchManager.Instance.activatedTraits[traitId] > traitData.TimesPerTurn - 1)
+            {
+                // LogDebug("False v2");
+                // LogDebug($"Activation Dict - {CollectionToString(MatchManager.Instance.activatedTraits)}");
+                // LogDebug($"Activated Traits - {MatchManager.Instance.activatedTraits[traitId]}");
+                return false;
+            }
+            if (!MatchManager.Instance.activatedTraits.ContainsKey(traitId))
+            {
+                MatchManager.Instance.activatedTraits.Add(traitId, 0);
+            }
             return true;
+
         }
 
+        /// <summary>
+        /// Checks to see if you can increment a Trait's activations
+        /// </summary>
+        /// <param name="traitId">The id of the trait we are checking</param>
+        public static bool CanIncrementTraitActivations(string traitId)
+        {
+            TraitData traitData = Globals.Instance.GetTraitData(traitId);
+            return CanIncrementTraitActivations(traitData);
+        }
         /// <summary>
         /// Specifies whether should apply to Auras, Curses, or Both (used when modifying AuraCurses)
         /// </summary>
@@ -923,7 +964,7 @@ namespace SamplePlugin
         }
 
         /// <summary>
-        /// Modifies Auras or Curses by a percentage. To specify "Reduce" use
+        /// Modifies Auras or Curses by a percentage. To specify "Reduce" use negative values for percentToModify
         /// </summary>
         /// <param name="percentToModify">Percentage to modify. +20 will increase all Auras/Curses by 20%. -10 will reduce all Auras/Curses by 10%.</param>
         /// <param name="isAuraOrCurse">Specifies whether you are applying to Auras, Curse, or Both</param>
@@ -932,7 +973,7 @@ namespace SamplePlugin
         public static void ModifyAllAurasOrCursesByPercent(int percentToModify, IsAuraOrCurse isAuraOrCurse, Character _characterTarget, Character _characterCaster)
         {
             if (percentToModify == 0 || _characterTarget == null || !_characterTarget.Alive) { return; }
-
+            // if (_characterCaster==null){return;} // might need this too, unsure
 
             int increaseAuras = 0;
             int reduceAuras = 0;
@@ -1014,5 +1055,234 @@ namespace SamplePlugin
                 }
             }
         }
+
+        /// <summary>
+        /// Applies an Aura or curse to all of something
+        /// </summary>
+        /// <param name="appliesTo">Who to apply the AC to</param>
+        /// <param name="acToApply">aura or curse to apply</param>
+        /// <param name="nToApply">amount to apply</param>
+        /// <param name="sourceCharacter">who is applying the AC</param>
+        /// <param name="useCharacterMods">whether or not to use the bonus modifiers for the AC</param>
+        /// <param name="useCharacterMods">whether or not to use the AC can be buffered</param>
+        public static void ApplyAuraCurseToAll(string acToApply, int nToApply, AppliesTo appliesTo, Character sourceCharacter = null, bool useCharacterMods= false, bool isPreventable= true)
+        {
+            LogInfo("ApplyAuraCurseToAll");
+            if (MatchManager.Instance == null){LogError("No MatchManager"); return;}
+            if (sourceCharacter == null && useCharacterMods){LogError("No Source Character"); return;}
+            
+            AuraCurseData acData = GetAuraCurseData(acToApply);
+            if (acData == null){LogError("Improper AuraCurse"); return;}
+
+            Hero[] heroes=MatchManager.Instance.GetTeamHero();
+            NPC[] npcs = MatchManager.Instance.GetTeamNPC();
+
+            switch (appliesTo)
+            {
+                case AppliesTo.Heroes:
+                    
+                    foreach(Hero hero in heroes)
+                    {
+                        if (IsLivingHero(hero))
+                        {
+                            hero.SetAura(sourceCharacter,acData,nToApply,useCharacterMods:useCharacterMods,canBePreventable:isPreventable);
+                        }
+                    }
+                    break;
+                case AppliesTo.Global:                    
+                    foreach(Hero hero in heroes)
+                    {
+                        if (IsLivingHero(hero))
+                        {
+                            hero.SetAura(sourceCharacter,acData,nToApply,useCharacterMods:useCharacterMods,canBePreventable:isPreventable);
+                        }
+                    }
+                    foreach(NPC npc in npcs)
+                    {
+                        if (IsLivingNPC(npc))
+                        {
+                            npc.SetAura(sourceCharacter,acData,nToApply,useCharacterMods:useCharacterMods,canBePreventable:isPreventable);
+                        }
+                    }
+
+                    break;
+                case AppliesTo.Monsters:
+                    foreach(NPC npc in npcs)
+                    {
+                        if (IsLivingNPC(npc))
+                        {
+                            npc.SetAura(sourceCharacter,acData,nToApply,useCharacterMods:useCharacterMods,canBePreventable:isPreventable);
+                        }
+                    }
+                    break;
+            }
+
+        }
+
+        public static string CollectionToString(Collection<object> values)
+        {   
+            return string.Join(",",values);
+        }   
+        
+        public static string CollectionToString(Dictionary<string,int> dictionary)
+        {   
+            return "{" + string.Join(",", dictionary.Select(kv => kv.Key + "=" + kv.Value).ToArray()) + "}";
+
+        }   
+
+        public static void DrawCards(int numToDraw)
+        {
+            MatchManager.Instance.NewCard(numToDraw, Enums.CardFrom.Deck);
+        }
+
+        /// <summary>
+        /// Gains Energy. Optional to specify if it comes from a trait or not.
+        /// </summary>
+        /// <param name="_character"> Character to gain energy </param>
+        /// <param name="energyToGain"> Amount of energy to gain</param>
+        /// <param name="traitData"> Optional: only used to specify the trait that is causing the effect for the purposes of scrolling text related to the remaining charges on a Trait.</param>
+        public static void GainEnergy(Character _character, int energyToGain, TraitData traitData = null)
+        {
+            if (!IsLivingHero(_character))
+            {
+                LogDebug("GainEnergy - Invalid Character");
+                return;
+            }
+            LogDebug("GainEnergy - Modifying Energy");
+
+            _character.ModifyEnergy(energyToGain, true);
+
+            if (((Object)_character.HeroItem == (Object)null))
+                return;
+
+            LogDebug("GainEnergy - Setting Effect AC");
+            
+            EffectsManager.Instance.PlayEffectAC("energy", true, _character.HeroItem.CharImageT, false);
+
+            if (traitData == null)
+                return;
+
+            // LogDebug("GainEnergy - Setting Combat Text");
+
+            // _character.HeroItem.ScrollCombatText(Texts.Instance.GetText($"traits_{traitData.TraitName}"), Enums.CombatScrollEffectType.Trait);
+
+            // LogDebug("GainEnergy - DONE");
+
+        }
+
+        /// <summary>
+        /// Steals an aura or a curse from the target.
+        /// </summary>
+        /// <param name="characterStealing"> Source Character (the one stealing) </param>
+        /// <param name="characterToStealFrom"> Target Character (the one being stolen from) </param>
+        /// <param name="nToSteal"> Number of Auras or curses to steal</param>
+        /// <param name="isAuraOrCurse"> Whether to steal an Aura or a Curse. Must be either Aura or Curse. Specifiying Both does nothing</param>
+        public static void StealAuraCurses(ref Character characterStealing, ref Character characterToStealFrom, int nToSteal, IsAuraOrCurse isAuraOrCurse = IsAuraOrCurse.Aura)
+        {
+            if (isAuraOrCurse == IsAuraOrCurse.Both)
+            {
+                LogDebug("Must Specify Aura or Curse to Steal");
+                return;
+            }
+            if (characterStealing == null || characterToStealFrom == null || !characterStealing.Alive || !characterToStealFrom.Alive)
+            {
+                LogDebug("Character to Steal from or Character Stealing is not a valid living character");
+                return;
+            }
+            List<string> curseList = new List<string>();
+            List<int> intList = new List<int>();
+            int num = 0;
+            // Character characterToStealFrom = (Character)null;
+            // if (_hero != null && _hero.Alive)
+            //     characterToStealFrom = (Character)_hero;
+            // else if (_npc != null && _npc.Alive)
+            //     characterToStealFrom = (Character)_npc;
+            if (characterToStealFrom != null)
+            {
+                for (int index = 0; index < characterToStealFrom.AuraList.Count && num < nToSteal; ++index)
+                {
+                    bool charsAreNonNull = characterToStealFrom.AuraList[index] != null && (UnityEngine.Object)characterToStealFrom.AuraList[index].ACData != (UnityEngine.Object)null;
+                    bool acHasCorrectType = isAuraOrCurse == IsAuraOrCurse.Aura ? characterToStealFrom.AuraList[index].ACData.IsAura : !characterToStealFrom.AuraList[index].ACData.IsAura;
+                    bool acIsRemovable = characterToStealFrom.AuraList[index].ACData.Removable && characterToStealFrom.AuraList[index].GetCharges() > 0;
+
+                    if (charsAreNonNull && acHasCorrectType && acIsRemovable )
+                    {
+                        curseList.Add(characterToStealFrom.AuraList[index].ACData.Id);
+                        intList.Add(characterToStealFrom.AuraList[index].GetCharges());
+                        ++num;
+                    }
+                }
+            }
+            if (num > 0)
+            {
+                characterToStealFrom.HealCursesName(curseList);
+                for (int index = 0; index < curseList.Count; ++index)
+                {
+                    if (characterStealing != null && characterStealing.Alive)
+                        characterStealing.SetAura(characterToStealFrom, Globals.Instance.GetAuraCurseData(curseList[index]), intList[index]);
+                }
+            }
+        }
+
+
+
+        /// <summary>
+        ///  Gets the cards in the characters deck as strings
+        /// </summary>
+        /// <param name="character">Character to get the Deck of</param>
+        /// <returns>A list of strings representing all cards in the characters deck</returns>
+        public static List<string> GetDeck(Character character)
+        {
+            return character.Cards;
+        }
+
+        /// <summary>
+        ///  Gets the cards in the characters deck as CardData objects
+        /// </summary>
+        /// <param name="character">Character to get the Deck of</param>
+        /// <returns>A list of CardDatas representing all cards in the characters deck</returns>
+        public static List<CardData> GetDeckCardData(Character character)
+        {
+            List<CardData> deck = [];
+            foreach (string card in character.Cards)
+            {
+                deck.Add(Globals.Instance.GetCardData(card));
+            }
+            return deck;
+        }
+
+        /// <summary>
+        /// Counts the auras or curses on a target character.
+        /// </summary>
+        /// <param name="character">Character to count</param>
+        /// <param name="isAuraOrCurse">Specifies if we should count only auras, only curses, or both</param>
+        /// <returns>The total count of all the auras or curses or both on a character</returns>
+        public static int CountAllACOnCharacter(Character character, IsAuraOrCurse isAuraOrCurse)
+        {
+            int sum = 0;
+            foreach (Aura aura in character.AuraList)
+            {
+                bool correctType = true; ;
+                switch (isAuraOrCurse)
+                {
+                    case IsAuraOrCurse.Aura:
+                        correctType = aura.ACData.IsAura;
+                        break;
+                    case IsAuraOrCurse.Curse:
+                        correctType = !aura.ACData.IsAura;
+                        break;
+                    case IsAuraOrCurse.Both:
+                        correctType = true;
+                        break;
+                }
+
+                if (correctType)
+                {
+                    sum += aura.AuraCharges;
+                }
+            }
+            return sum;
+        }
+
     }
 }
