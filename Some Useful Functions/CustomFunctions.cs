@@ -283,12 +283,12 @@ namespace SamplePlugin
         /// <param name="class1">Card Class that could be reduced</param>
         /// <param name="class2">Card Class that could be reduced</param>
         /// <param name="_trait">Trait this is attributable to</param>
-        public static void Duality(ref Character _character, ref CardData _castedCard, Enums.CardClass class1, Enums.CardClass class2, string _trait)
+        public static void Duality(ref Character _character, ref CardData _castedCard, Enums.CardClass class1, Enums.CardClass class2, string _trait, int bonusActivations = 0)
         {
             if (!((Object)MatchManager.Instance != (Object)null) || !((Object)_castedCard != (Object)null))
                 return;
             TraitData traitData = Globals.Instance.GetTraitData(_trait);
-            if (MatchManager.Instance.activatedTraits != null && MatchManager.Instance.activatedTraits.ContainsKey(_trait) && MatchManager.Instance.activatedTraits[_trait] > traitData.TimesPerTurn - 1)
+            if (MatchManager.Instance.activatedTraits != null && MatchManager.Instance.activatedTraits.ContainsKey(_trait) && MatchManager.Instance.activatedTraits[_trait] > (traitData.TimesPerTurn - 1 + bonusActivations))
                 return;
             for (int index1 = 0; index1 < 2; ++index1)
             {
@@ -339,7 +339,7 @@ namespace SamplePlugin
                     cardData1.EnergyReductionTemporal += num2;
                     MatchManager.Instance.GetCardFromTableByIndex(cardData1.InternalId).ShowEnergyModification(-num2);
                     MatchManager.Instance.UpdateHandCards();
-                    _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + traitData.TraitName) + TextChargesLeft(MatchManager.Instance.activatedTraits[_trait], traitData.TimesPerTurn), Enums.CombatScrollEffectType.Trait);
+                    _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + traitData.TraitName) + TextChargesLeft(MatchManager.Instance.activatedTraits[_trait], traitData.TimesPerTurn + bonusActivations), Enums.CombatScrollEffectType.Trait);
                     MatchManager.Instance.CreateLogCardModification(cardData1.InternalId, MatchManager.Instance.GetHero(_character.HeroIndex));
                     break;
                 }
@@ -355,12 +355,12 @@ namespace SamplePlugin
         /// <param name="whenYouPlayThis"> Card type to trigger the effect</param>
         /// <param name="amountToReduce"> Amount of energy reduction per time this triggers</param>
         /// <param name="_trait"> Trait this is attributed to</param>
-        public static void PermanentyReduceXWhenYouPlayY(ref Character _character, ref CardData _castedCard, Enums.CardType reduceThis, Enums.CardType whenYouPlayThis, int amountToReduce, string _trait)
+        public static void PermanentyReduceXWhenYouPlayY(ref Character _character, ref CardData _castedCard, Enums.CardType reduceThis, Enums.CardType whenYouPlayThis, int amountToReduce, string _trait, int bonusActivations = 0)
         {
             if (!((Object)MatchManager.Instance != (Object)null) || !((Object)_castedCard != (Object)null))
                 return;
             TraitData traitData = Globals.Instance.GetTraitData(_trait);
-            if (MatchManager.Instance.activatedTraits != null && MatchManager.Instance.activatedTraits.ContainsKey(_trait) && MatchManager.Instance.activatedTraits[_trait] > traitData.TimesPerTurn - 1)
+            if (MatchManager.Instance.activatedTraits != null && MatchManager.Instance.activatedTraits.ContainsKey(_trait) && MatchManager.Instance.activatedTraits[_trait] > traitData.TimesPerTurn - 1 + bonusActivations)
                 return;
 
             if (!_castedCard.GetCardTypes().Contains(whenYouPlayThis))
@@ -401,7 +401,7 @@ namespace SamplePlugin
             selectedCard.EnergyReductionPermanent += amountToReduce;
             MatchManager.Instance.GetCardFromTableByIndex(selectedCard.InternalId).ShowEnergyModification(-amountToReduce);
             MatchManager.Instance.UpdateHandCards();
-            _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + _trait) + TextChargesLeft(MatchManager.Instance.activatedTraits[_trait], traitData.TimesPerTurn), Enums.CombatScrollEffectType.Trait);
+            _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + _trait) + TextChargesLeft(MatchManager.Instance.activatedTraits[_trait], traitData.TimesPerTurn + bonusActivations), Enums.CombatScrollEffectType.Trait);
             MatchManager.Instance.CreateLogCardModification(selectedCard.InternalId, MatchManager.Instance.GetHero(_character.HeroIndex));
         }
 
@@ -867,14 +867,29 @@ namespace SamplePlugin
         /// <summary>
         /// Displays the remaining charges for a trait. Might lead to errors (isn't well protected). Common to play sound effects after.
         /// </summary>
-        /// <param name="_character">Character we are checking if it has the trait</param>
-        /// <param name="traitData">The Trait we are checking</param>
+        /// <param name="_character">Character we displaying the charges for</param>
+        /// <param name="traitData">The Trait we are displaying charges for</param>
 
-        public static void DisplayRemainingChargesForTrait(ref Character _character, TraitData traitData)
+        public static void DisplayRemainingChargesForTrait(ref Character _character, TraitData traitData, int bonusActivation = 0)
         {
             if (_character.HeroItem != null)
             {
-                _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + traitData.TraitName, "") + TextChargesLeft(MatchManager.Instance.activatedTraits[traitData.TraitName], traitData.TimesPerTurn), Enums.CombatScrollEffectType.Trait);
+                _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + traitData.TraitName, "") + TextChargesLeft(MatchManager.Instance.activatedTraits[traitData.TraitName], traitData.TimesPerTurn + bonusActivation), Enums.CombatScrollEffectType.Trait);
+            }
+        }
+
+        /// <summary>
+        /// Displays the remaining charges for a trait. Might lead to errors (isn't well protected). Common to play sound effects after.
+        /// </summary>
+        /// <param name="_character">Character we displaying the charges for</param>
+        /// <param name="traitId">The ID of the Trait we are displaying</param>
+
+        public static void DisplayRemainingChargesForTrait(ref Character _character, string traitId, int bonusActivation = 0)
+        {
+            TraitData traitData = Globals.Instance.GetTraitData(traitId);
+            if (_character.HeroItem != null)
+            {
+                _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + traitData.TraitName, "") + TextChargesLeft(MatchManager.Instance.activatedTraits[traitData.TraitName], traitData.TimesPerTurn + bonusActivation), Enums.CombatScrollEffectType.Trait);
             }
         }
 
@@ -913,7 +928,7 @@ namespace SamplePlugin
         /// Checks to see if you can increment a Trait's activations
         /// </summary>
         /// <param name="traitData">The Trait we are checking</param>
-        public static bool CanIncrementTraitActivations(TraitData traitData)
+        public static bool CanIncrementTraitActivations(TraitData traitData, int bonusActivations = 1)
         {
             LogDebug("canIncrementTraitActivations");
             if (traitData == null)
@@ -929,7 +944,7 @@ namespace SamplePlugin
             {
                 return false;
             }
-            if (MatchManager.Instance.activatedTraits.ContainsKey(traitId) && MatchManager.Instance.activatedTraits[traitId] > traitData.TimesPerTurn - 1)
+            if (MatchManager.Instance.activatedTraits.ContainsKey(traitId) && MatchManager.Instance.activatedTraits[traitId] > traitData.TimesPerTurn - 1 + bonusActivations)
             {
                 // LogDebug("False v2");
                 // LogDebug($"Activation Dict - {CollectionToString(MatchManager.Instance.activatedTraits)}");
@@ -948,10 +963,10 @@ namespace SamplePlugin
         /// Checks to see if you can increment a Trait's activations
         /// </summary>
         /// <param name="traitId">The id of the trait we are checking</param>
-        public static bool CanIncrementTraitActivations(string traitId)
+        public static bool CanIncrementTraitActivations(string traitId, int bonusActivations = 0)
         {
             TraitData traitData = Globals.Instance.GetTraitData(traitId);
-            return CanIncrementTraitActivations(traitData);
+            return CanIncrementTraitActivations(traitData, bonusActivations);
         }
         /// <summary>
         /// Specifies whether should apply to Auras, Curses, or Both (used when modifying AuraCurses)

@@ -31,7 +31,7 @@ namespace TheSubclass
         public static void PLog(string s)
         {
             Plugin.Log.LogDebug(debugBase + s);
-        }        
+        }
 
         /// <summary>
         /// Indirect healing for Traits (Ottis's Shielder, Malukah's Voodoo etc)
@@ -283,12 +283,12 @@ namespace TheSubclass
         /// <param name="class1">Card Class that could be reduced</param>
         /// <param name="class2">Card Class that could be reduced</param>
         /// <param name="_trait">Trait this is attributable to</param>
-        public static void Duality(ref Character _character, ref CardData _castedCard, Enums.CardClass class1, Enums.CardClass class2, string _trait)
+        public static void Duality(ref Character _character, ref CardData _castedCard, Enums.CardClass class1, Enums.CardClass class2, string _trait, int bonusActivations = 0)
         {
             if (!((Object)MatchManager.Instance != (Object)null) || !((Object)_castedCard != (Object)null))
                 return;
             TraitData traitData = Globals.Instance.GetTraitData(_trait);
-            if (MatchManager.Instance.activatedTraits != null && MatchManager.Instance.activatedTraits.ContainsKey(_trait) && MatchManager.Instance.activatedTraits[_trait] > traitData.TimesPerTurn - 1)
+            if (MatchManager.Instance.activatedTraits != null && MatchManager.Instance.activatedTraits.ContainsKey(_trait) && MatchManager.Instance.activatedTraits[_trait] > (traitData.TimesPerTurn - 1 + bonusActivations))
                 return;
             for (int index1 = 0; index1 < 2; ++index1)
             {
@@ -339,7 +339,7 @@ namespace TheSubclass
                     cardData1.EnergyReductionTemporal += num2;
                     MatchManager.Instance.GetCardFromTableByIndex(cardData1.InternalId).ShowEnergyModification(-num2);
                     MatchManager.Instance.UpdateHandCards();
-                    _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + traitData.TraitName) + TextChargesLeft(MatchManager.Instance.activatedTraits[_trait], traitData.TimesPerTurn), Enums.CombatScrollEffectType.Trait);
+                    _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + traitData.TraitName) + TextChargesLeft(MatchManager.Instance.activatedTraits[_trait], traitData.TimesPerTurn + bonusActivations), Enums.CombatScrollEffectType.Trait);
                     MatchManager.Instance.CreateLogCardModification(cardData1.InternalId, MatchManager.Instance.GetHero(_character.HeroIndex));
                     break;
                 }
@@ -355,12 +355,12 @@ namespace TheSubclass
         /// <param name="whenYouPlayThis"> Card type to trigger the effect</param>
         /// <param name="amountToReduce"> Amount of energy reduction per time this triggers</param>
         /// <param name="_trait"> Trait this is attributed to</param>
-        public static void PermanentyReduceXWhenYouPlayY(ref Character _character, ref CardData _castedCard, Enums.CardType reduceThis, Enums.CardType whenYouPlayThis, int amountToReduce, string _trait)
+        public static void PermanentyReduceXWhenYouPlayY(ref Character _character, ref CardData _castedCard, Enums.CardType reduceThis, Enums.CardType whenYouPlayThis, int amountToReduce, string _trait, int bonusActivations = 0)
         {
             if (!((Object)MatchManager.Instance != (Object)null) || !((Object)_castedCard != (Object)null))
                 return;
             TraitData traitData = Globals.Instance.GetTraitData(_trait);
-            if (MatchManager.Instance.activatedTraits != null && MatchManager.Instance.activatedTraits.ContainsKey(_trait) && MatchManager.Instance.activatedTraits[_trait] > traitData.TimesPerTurn - 1)
+            if (MatchManager.Instance.activatedTraits != null && MatchManager.Instance.activatedTraits.ContainsKey(_trait) && MatchManager.Instance.activatedTraits[_trait] > traitData.TimesPerTurn - 1 + bonusActivations)
                 return;
 
             if (!_castedCard.GetCardTypes().Contains(whenYouPlayThis))
@@ -401,7 +401,7 @@ namespace TheSubclass
             selectedCard.EnergyReductionPermanent += amountToReduce;
             MatchManager.Instance.GetCardFromTableByIndex(selectedCard.InternalId).ShowEnergyModification(-amountToReduce);
             MatchManager.Instance.UpdateHandCards();
-            _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + _trait) + TextChargesLeft(MatchManager.Instance.activatedTraits[_trait], traitData.TimesPerTurn), Enums.CombatScrollEffectType.Trait);
+            _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + _trait) + TextChargesLeft(MatchManager.Instance.activatedTraits[_trait], traitData.TimesPerTurn + bonusActivations), Enums.CombatScrollEffectType.Trait);
             MatchManager.Instance.CreateLogCardModification(selectedCard.InternalId, MatchManager.Instance.GetHero(_character.HeroIndex));
         }
 
@@ -867,14 +867,29 @@ namespace TheSubclass
         /// <summary>
         /// Displays the remaining charges for a trait. Might lead to errors (isn't well protected). Common to play sound effects after.
         /// </summary>
-        /// <param name="_character">Character we are checking if it has the trait</param>
-        /// <param name="traitData">The Trait we are checking</param>
+        /// <param name="_character">Character we displaying the charges for</param>
+        /// <param name="traitData">The Trait we are displaying charges for</param>
 
-        public static void DisplayRemainingChargesForTrait(ref Character _character, TraitData traitData)
+        public static void DisplayRemainingChargesForTrait(ref Character _character, TraitData traitData, int bonusActivation = 0)
         {
             if (_character.HeroItem != null)
             {
-                _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + traitData.TraitName, "") + TextChargesLeft(MatchManager.Instance.activatedTraits[traitData.TraitName], traitData.TimesPerTurn), Enums.CombatScrollEffectType.Trait);
+                _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + traitData.TraitName, "") + TextChargesLeft(MatchManager.Instance.activatedTraits[traitData.TraitName], traitData.TimesPerTurn + bonusActivation), Enums.CombatScrollEffectType.Trait);
+            }
+        }
+
+        /// <summary>
+        /// Displays the remaining charges for a trait. Might lead to errors (isn't well protected). Common to play sound effects after.
+        /// </summary>
+        /// <param name="_character">Character we displaying the charges for</param>
+        /// <param name="traitId">The ID of the Trait we are displaying</param>
+
+        public static void DisplayRemainingChargesForTrait(ref Character _character, string traitId, int bonusActivation = 0)
+        {
+            TraitData traitData = Globals.Instance.GetTraitData(traitId);
+            if (_character.HeroItem != null)
+            {
+                _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + traitData.TraitName, "") + TextChargesLeft(MatchManager.Instance.activatedTraits[traitData.TraitName], traitData.TimesPerTurn + bonusActivation), Enums.CombatScrollEffectType.Trait);
             }
         }
 
@@ -913,10 +928,10 @@ namespace TheSubclass
         /// Checks to see if you can increment a Trait's activations
         /// </summary>
         /// <param name="traitData">The Trait we are checking</param>
-        public static bool CanIncrementTraitActivations(TraitData traitData)
+        public static bool CanIncrementTraitActivations(TraitData traitData, int bonusActivations = 1)
         {
             LogDebug("canIncrementTraitActivations");
-            if (traitData==null)
+            if (traitData == null)
             {
                 return false;
             }
@@ -929,7 +944,7 @@ namespace TheSubclass
             {
                 return false;
             }
-            if ( MatchManager.Instance.activatedTraits.ContainsKey(traitId) && MatchManager.Instance.activatedTraits[traitId] > traitData.TimesPerTurn - 1)
+            if (MatchManager.Instance.activatedTraits.ContainsKey(traitId) && MatchManager.Instance.activatedTraits[traitId] > traitData.TimesPerTurn - 1 + bonusActivations)
             {
                 // LogDebug("False v2");
                 // LogDebug($"Activation Dict - {CollectionToString(MatchManager.Instance.activatedTraits)}");
@@ -948,10 +963,10 @@ namespace TheSubclass
         /// Checks to see if you can increment a Trait's activations
         /// </summary>
         /// <param name="traitId">The id of the trait we are checking</param>
-        public static bool CanIncrementTraitActivations(string traitId)
+        public static bool CanIncrementTraitActivations(string traitId, int bonusActivations = 0)
         {
             TraitData traitData = Globals.Instance.GetTraitData(traitId);
-            return CanIncrementTraitActivations(traitData);
+            return CanIncrementTraitActivations(traitData, bonusActivations);
         }
         /// <summary>
         /// Specifies whether should apply to Auras, Curses, or Both (used when modifying AuraCurses)
@@ -1065,53 +1080,53 @@ namespace TheSubclass
         /// <param name="sourceCharacter">who is applying the AC</param>
         /// <param name="useCharacterMods">whether or not to use the bonus modifiers for the AC</param>
         /// <param name="useCharacterMods">whether or not to use the AC can be buffered</param>
-        public static void ApplyAuraCurseToAll(string acToApply, int nToApply, AppliesTo appliesTo, Character sourceCharacter = null, bool useCharacterMods= false, bool isPreventable= true)
+        public static void ApplyAuraCurseToAll(string acToApply, int nToApply, AppliesTo appliesTo, Character sourceCharacter = null, bool useCharacterMods = false, bool isPreventable = true)
         {
             LogInfo("ApplyAuraCurseToAll");
-            if (MatchManager.Instance == null){LogError("No MatchManager"); return;}
-            if (sourceCharacter == null && useCharacterMods){LogError("No Source Character"); return;}
-            
-            AuraCurseData acData = GetAuraCurseData(acToApply);
-            if (acData == null){LogError("Improper AuraCurse"); return;}
+            if (MatchManager.Instance == null) { LogError("No MatchManager"); return; }
+            if (sourceCharacter == null && useCharacterMods) { LogError("No Source Character"); return; }
 
-            Hero[] heroes=MatchManager.Instance.GetTeamHero();
+            AuraCurseData acData = GetAuraCurseData(acToApply);
+            if (acData == null) { LogError("Improper AuraCurse"); return; }
+
+            Hero[] heroes = MatchManager.Instance.GetTeamHero();
             NPC[] npcs = MatchManager.Instance.GetTeamNPC();
 
             switch (appliesTo)
             {
                 case AppliesTo.Heroes:
-                    
-                    foreach(Hero hero in heroes)
+
+                    foreach (Hero hero in heroes)
                     {
                         if (IsLivingHero(hero))
                         {
-                            hero.SetAura(sourceCharacter,acData,nToApply,useCharacterMods:useCharacterMods,canBePreventable:isPreventable);
+                            hero.SetAura(sourceCharacter, acData, nToApply, useCharacterMods: useCharacterMods, canBePreventable: isPreventable);
                         }
                     }
                     break;
-                case AppliesTo.Global:                    
-                    foreach(Hero hero in heroes)
+                case AppliesTo.Global:
+                    foreach (Hero hero in heroes)
                     {
                         if (IsLivingHero(hero))
                         {
-                            hero.SetAura(sourceCharacter,acData,nToApply,useCharacterMods:useCharacterMods,canBePreventable:isPreventable);
+                            hero.SetAura(sourceCharacter, acData, nToApply, useCharacterMods: useCharacterMods, canBePreventable: isPreventable);
                         }
                     }
-                    foreach(NPC npc in npcs)
+                    foreach (NPC npc in npcs)
                     {
                         if (IsLivingNPC(npc))
                         {
-                            npc.SetAura(sourceCharacter,acData,nToApply,useCharacterMods:useCharacterMods,canBePreventable:isPreventable);
+                            npc.SetAura(sourceCharacter, acData, nToApply, useCharacterMods: useCharacterMods, canBePreventable: isPreventable);
                         }
                     }
 
                     break;
                 case AppliesTo.Monsters:
-                    foreach(NPC npc in npcs)
+                    foreach (NPC npc in npcs)
                     {
                         if (IsLivingNPC(npc))
                         {
-                            npc.SetAura(sourceCharacter,acData,nToApply,useCharacterMods:useCharacterMods,canBePreventable:isPreventable);
+                            npc.SetAura(sourceCharacter, acData, nToApply, useCharacterMods: useCharacterMods, canBePreventable: isPreventable);
                         }
                     }
                     break;
@@ -1120,15 +1135,15 @@ namespace TheSubclass
         }
 
         public static string CollectionToString(Collection<object> values)
-        {   
-            return string.Join(",",values);
-        }   
-        
-        public static string CollectionToString(Dictionary<string,int> dictionary)
-        {   
+        {
+            return string.Join(",", values);
+        }
+
+        public static string CollectionToString(Dictionary<string, int> dictionary)
+        {
             return "{" + string.Join(",", dictionary.Select(kv => kv.Key + "=" + kv.Value).ToArray()) + "}";
 
-        }   
+        }
 
         public static void DrawCards(int numToDraw)
         {
@@ -1156,7 +1171,7 @@ namespace TheSubclass
                 return;
 
             LogDebug("GainEnergy - Setting Effect AC");
-            
+
             EffectsManager.Instance.PlayEffectAC("energy", true, _character.HeroItem.CharImageT, false);
 
             if (traitData == null)
@@ -1205,7 +1220,7 @@ namespace TheSubclass
                     bool acHasCorrectType = isAuraOrCurse == IsAuraOrCurse.Aura ? characterToStealFrom.AuraList[index].ACData.IsAura : !characterToStealFrom.AuraList[index].ACData.IsAura;
                     bool acIsRemovable = characterToStealFrom.AuraList[index].ACData.Removable && characterToStealFrom.AuraList[index].GetCharges() > 0;
 
-                    if (charsAreNonNull && acHasCorrectType && acIsRemovable )
+                    if (charsAreNonNull && acHasCorrectType && acIsRemovable)
                     {
                         curseList.Add(characterToStealFrom.AuraList[index].ACData.Id);
                         intList.Add(characterToStealFrom.AuraList[index].GetCharges());
@@ -1284,5 +1299,132 @@ namespace TheSubclass
             return sum;
         }
 
+        /// <summary>
+        /// Reduces the cost of a card.
+        /// </summary>
+        /// <param name="cardData">Card to Reduce.</param>
+        /// <param name="currentCharacter">character to reduce the cards for. If null, gets the current active hero.</param>
+        /// <param name="amountToReduce">Amount to reduce the card's cost by</param>
+        /// <param name="isPermanent">If true, makes the reduction permanent.</param>
+        public static void ReduceCardCost(ref CardData cardData, Character currentCharacter= null, int amountToReduce = 1, bool isPermanent = false)
+        {
+            if (MatchManager.Instance == null)
+            {
+                LogError("Null MatchManager");
+                return;
+            }
+
+            currentCharacter ??= MatchManager.Instance.GetHeroHeroActive();
+            if (isPermanent)
+            {
+                cardData.EnergyReductionPermanent += amountToReduce;
+            }
+            else
+            {
+                cardData.EnergyReductionTemporal += amountToReduce;
+            }
+            MatchManager.Instance.GetCardFromTableByIndex(cardData.InternalId).ShowEnergyModification(-amountToReduce);
+            MatchManager.Instance.UpdateHandCards();
+            // this.character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_Scholar") + TextChargesLeft(MatchManager.Instance.activatedTraits[nameof (scholar)], traitData.TimesPerTurn), Enums.CombatScrollEffectType.Trait);
+            MatchManager.Instance.CreateLogCardModification(cardData.InternalId, MatchManager.Instance.GetHero(currentCharacter.HeroIndex));
+        }
+
+
+        /// <summary>
+        /// Gets the highest cost card in your hand. If multiple of the same cost, randomly chooses one.
+        /// </summary>
+        /// <param name="heroHand"> The hero's hand. If null, gets the current active hero's hand.</param>
+        /// <param name="cardType">The cardType you are looking for. Use None to specify any card.</param>
+        /// <returns>A random card with the highest cost of cardType. Returns null if card is not found.</returns>
+        public static CardData GetRandomHighestCostCard(Enums.CardType cardType, List<string> heroHand= null)
+        {
+            if (MatchManager.Instance == null)
+            {
+                LogError("Null MatchManager");
+                return null;
+            }
+            heroHand ??= MatchManager.Instance.GetHeroHand(MatchManager.Instance.GetHeroActive());
+
+            int num1 = 0;
+            List<CardData> cardDataList = new(); 
+            for (int index = 0; index < heroHand.Count; ++index)
+            {
+                CardData cardData = MatchManager.Instance.GetCardData(heroHand[index]);
+                if ((Object)cardData != (Object)null && cardData.GetCardTypes().Contains(cardType) && cardData.GetCardFinalCost() > num1)
+                    num1 = cardData.GetCardFinalCost();
+            }
+            if (num1 <= 0)
+                return null;
+            for (int index = 0; index < heroHand.Count; ++index)
+            {
+                CardData cardData = MatchManager.Instance.GetCardData(heroHand[index]);
+                if ((Object)cardData != (Object)null && cardData.GetCardTypes().Contains(cardType) && cardData.GetCardFinalCost() >= num1)
+                    cardDataList.Add(cardData);
+            }
+            if (cardDataList.Count <= 0)
+                return null;
+
+            CardData cardData1 = cardDataList.Count != 1 ? cardDataList[MatchManager.Instance.GetRandomIntRange(0, cardDataList.Count)] : cardDataList[0];
+
+            return cardData1;
+        }
+
+        /// <summary>
+        /// Gets cards of a certain type from the active character's hand.
+        /// </summary>
+        /// <param name="cardType">The card type</param>
+        /// <param name="equalOrAboveCertainCost">The cards must be greater than or equal to this amount</param>
+        /// <param name="lessThanOrEqualToThisCost">The cards must be less than or equal to this amount</param>
+        /// <returns></returns>
+        public static List<CardData> GetCardsFromHand(Enums.CardType cardType = Enums.CardType.None, int equalOrAboveCertainCost = 0, int lessThanOrEqualToThisCost = 100)
+        {
+            Character character = MatchManager.Instance.GetHeroHeroActive();
+            List<string> heroHand = MatchManager.Instance.GetHeroHand(character.HeroIndex);
+
+            List<CardData> cardDataList = new List<CardData>();
+            for (int index = 0; index < heroHand.Count; ++index)
+            {
+                CardData cardData = MatchManager.Instance.GetCardData(heroHand[index]);
+                if ((UnityEngine.Object)cardData != (UnityEngine.Object)null && cardData.GetCardFinalCost() > 0 && (cardData.GetCardTypes().Contains(cardType)||cardType==Enums.CardType.None) && cardData.GetCardFinalCost() >= equalOrAboveCertainCost && cardData.GetCardFinalCost() <= lessThanOrEqualToThisCost)
+                    cardDataList.Add(cardData);
+            }
+            return cardDataList;
+        }
+
+        /// <summary>
+        /// Gets cards of a certain type from your hand.
+        /// </summary>
+        /// <param name="heroHand">The hand</param>
+        /// <param name="cardType">The card type</param>
+        /// <param name="equalOrAboveCertainCost">The cards must be greater than or equal to this amount</param>
+        /// <param name="lessThanOrEqualToThisCost">The cards must be less than or equal to this amount</param>
+        /// <returns></returns>
+        public static List<CardData> GetCardsFromHand(List<string> heroHand, Enums.CardType cardType = Enums.CardType.None, int equalOrAboveCertainCost = 0, int lessThanOrEqualToThisCost = 100)
+        {
+            // List<string> heroHand = MatchManager.Instance.GetHeroHand(character.HeroIndex);
+
+            List<CardData> cardDataList = new List<CardData>();
+            for (int index = 0; index < heroHand.Count; ++index)
+            {
+                CardData cardData = MatchManager.Instance.GetCardData(heroHand[index]);
+                if ((UnityEngine.Object)cardData != (UnityEngine.Object)null && cardData.GetCardFinalCost() > 0 && (cardData.GetCardTypes().Contains(cardType)||cardType==Enums.CardType.None) && cardData.GetCardFinalCost() >= equalOrAboveCertainCost && cardData.GetCardFinalCost() <= lessThanOrEqualToThisCost)
+                    cardDataList.Add(cardData);
+            }
+            return cardDataList;
+        }
+
+
+        /// <summary>
+        /// Gets the rightmost card in a hand. Syntatic Sugar for MatchManager.Instance.GetCardData(heroHand.Last());
+        /// </summary>
+        /// <param name="heroHand">Hand to get the card from.</param>
+        /// <returns>The rightmore card</returns>
+        public static CardData GetRightmostCard(List<string> heroHand)
+        {
+            // MatchManager.Instance.GetCardData(heroHand.Last());
+            return MatchManager.Instance.GetCardData(heroHand.Last());
+        }
+
     }
 }
+
