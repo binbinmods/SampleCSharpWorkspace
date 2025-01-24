@@ -216,6 +216,7 @@ namespace TheSubclass
         [HarmonyPatch(typeof(AtOManager), "HeroLevelUp")]
         public static bool HeroLevelUpPrefix(ref AtOManager __instance, Hero[] ___teamAtO, int heroIndex, string traitId)
         {
+            // 
             Hero hero = ___teamAtO[heroIndex];
             LogDebug(debugBase + "Level up before conditions for subclass " + hero.SubclassName + " trait id " + traitId);
 
@@ -237,12 +238,54 @@ namespace TheSubclass
         [HarmonyPatch(typeof(AtOManager), "GlobalAuraCurseModificationByTraitsAndItems")]
         public static void GlobalAuraCurseModificationByTraitsAndItemsPostfix(ref AtOManager __instance, ref AuraCurseData __result, string _type, string _acId, Character _characterCaster, Character _characterTarget)
         {
-            // Shadow Poison -  +1 Shadow Damage per 10 stacks of Poison on you. 
-            // Antidote - You are immune to Poison damage, Poison stacks on you are limited to 300
+            // This is one of the most used functions, it has a long name, so I refer to it as the GACM
+            // This function is used to modify anything about auras or curses.
+            // If you want to increase the maximum charges of an aura, you use this
+            // If you want to increase burn damage, you do it here
+            // Practically anything to do with auras or curses themselves goes into this function.
+
+
+            // It references two characters, and two different cases. 
+            // The two cases are "should the aura/curse update when the aura or curse is applied or consumed or both"
+            // In 95% of cases it is "both" so the code has been set up to handle that.
+
+            // I have combined them together, so just trust me that it works for now            
+            // If you have a very specific change that isn't working in very specific circumstances, you might want to look under the hood a bit more
+            // But for most use cases, just trust that there is only every one character of interest.
+            Character characterOfInterest = _type == "set" ? _characterTarget : _characterCaster;
             
+            
+            switch (_acId)
+            {
+                // We need to first select our aura or curse to modify. I am going to be using Laia's Righteous Flame
+                // Burn on this hero heals 0.3 HP per charge instead of suffering damage. Zeal on this hero increases all damage done by 7% per charge.
+                case "burn":
+                    
+                    // This function can get a bit confusing and was prone to typos so I simplified it to one if statement
+                    // This needs 4 main things:
+                    // 1. The characterOfInterest (dont change this one)
+                    // 2. What is modifying the aura/curse: a trait, an item, or a perk?
+                    // 3. What is the Id of that thing
+                    // 4. Who does the modification apply to, this hero, all heroes, all monsters, or everyone (global)
+                    if(IfCharacterHas(characterOfInterest,CharacterHas.Trait,"righteousflame",AppliesTo.ThisHero))
+                    {
+                        __result.ProduceDamageWhenConsumed = false; // turns off burn's damage
+                        __result.DamageWhenConsumedPerCharge = 0.0f; // sets burn's damage to 0
+                        __result.ProduceHealWhenConsumed = true; // lets burn heal
+                        __result.HealWhenConsumedPerCharge = 0.3f; // sets burn's heal amount
+                    }
+                    break;
+
+                case "zeal":
+                    if(IfCharacterHas(characterOfInterest,CharacterHas.Trait,"righteousflame",AppliesTo.ThisHero))
+                    {
+                        __result.AuraDamageType2 = Enums.DamageType.All; // sets the type of damage that zeal increases
+                        __result.AuraDamageIncreasedPercentPerStack2 = 7f; // sets how much zeal increases damage by
+                    }
+                    break;
+            }
+
         }
-
-
 
     }
 }
