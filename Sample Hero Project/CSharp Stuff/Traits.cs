@@ -195,20 +195,31 @@ namespace TheSubclass
 
 
         [HarmonyPrefix]
-        [HarmonyPatch(typeof(Character), "SetEvent")]
-        public static void SetEventPrefix(ref Character __instance, ref Enums.EventActivation theEvent, Character target = null)
+        [HarmonyPatch(typeof(Character), nameof(Character.SetEvent))]
+        public static void SetEventPrefix(ref Character __instance, ref Enums.EventActivation theEvent, Character target = null, int auxInt = 0, string auxString = "")
         {
-            /*
-            if (theEvent == Enums.EventActivation.AuraCurseSet && !__instance.IsHero && target != null && target.IsHero && target.HaveTrait("ulfvitrconductor") && __instance.HasEffect("spark"))
-            { // if NPC has wet applied to them, deal 50% of their sparks as indirect lightning damage
-                __instance.IndirectDamage(Enums.DamageType.Lightning, Functions.FuncRoundToInt((float)__instance.GetAuraCharges("spark") * 0.5f));
+            // If a trait has two different activations:
+            // Lets say the trait is: At the start of your turn, gain 1 powerful. When this character applies Wet to a monster, they take 50% of their Sparks as Lightning Damage.
+            // One part could be taken care of in the DoCustomTrait. Suppose that is the "At the Start of your turn..." one
+            // We then have to use a separate function to do the second half, 
+            // since it has a different activation condition (AuraCurseSet as opposed to BeginTurn)
+
+
+            // conditions:
+            // 1. Applying an AuraCurse
+            // 2. The AuraCurse is Wet
+            // 3. The instance (the one suffering the wet) has Sparks (this isn't technically necessary)
+            // 4. The instance is a living NPC
+            // 5. The target (the caster) is a living Hero (again, never bad to check)
+            // 5. The target has the correct trait (in this case it was ulfvitrconductor)
+            if (theEvent == Enums.EventActivation.AuraCurseSet && auxString == "wet" && __instance.HasEffect("spark") && IsLivingNPC(__instance) && IsLivingHero(target) && target.HaveTrait("ulfvitrconductor"))
+            { 
+                // When this character applies Wet to a monster, they take 50% of their Sparks as Lightning Damage. This damage does not benefit from modifiers.
+                
+                // Indirect damage is damage that does not benefit from modifiers
+                int damageToDeal = Functions.FuncRoundToInt((float)__instance.GetAuraCharges("spark") * 0.5f);
+                __instance.IndirectDamage(Enums.DamageType.Lightning, damageToDeal);
             }
-            if (theEvent == Enums.EventActivation.BeginTurn && __instance.IsHero && (__instance.HaveTrait("pestilyhealingtoxins")||__instance.HaveTrait("pestilytoxichealing"))){
-                level5ActivationCounter=0;
-                // Plugin.Log.LogInfo("Binbin - PestilyBiohealer - Reset Activation Counter: "+ level5ActivationCounter);
-            }
-            
-            */
         }
 
 
@@ -216,11 +227,14 @@ namespace TheSubclass
         [HarmonyPatch(typeof(AtOManager), "HeroLevelUp")]
         public static bool HeroLevelUpPrefix(ref AtOManager __instance, Hero[] ___teamAtO, int heroIndex, string traitId)
         {
-            // 
+            // HeroLevelUp is what fires when a hero level ups and attempts to assign a trait.
+            // Honestly this patch should have been for the AssignTrait function, but heroLevelUp is slightly more versatile
+            // This is a simple patch that assigns the "Mage" subclass to a character when they choose a particular trait
+
             Hero hero = ___teamAtO[heroIndex];
             LogDebug(debugBase + "Level up before conditions for subclass " + hero.SubclassName + " trait id " + traitId);
 
-            string traitOfInterest = myTraitList[4]; //Learn real magic
+            string traitOfInterest = "tricksterlearnrealmagic"; //myTraitList[4]; //Learn real magic
             if (hero.AssignTrait(traitId))
             {
                 TraitData traitData = Globals.Instance.GetTraitData(traitId);
