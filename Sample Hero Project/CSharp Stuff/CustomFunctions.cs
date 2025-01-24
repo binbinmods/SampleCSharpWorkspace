@@ -40,7 +40,7 @@ namespace TheSubclass
         /// <param name="_target">Target to Heal</param>
         /// <param name="healAmount">Amount to Heal</param>
         /// <param name="traitName">Trait it is attributed to</param>
-        public static void TraitHeal(ref Character _character, Character _target, int healAmount, string traitName)
+        public static void TraitHeal(ref Character _character, ref Character _target, int healAmount, string traitName)
         {
             // Used to have a ref for _target. Need to make sure that it works without the ref
             int _hp = healAmount;

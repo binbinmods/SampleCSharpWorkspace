@@ -1,95 +1,92 @@
-﻿using BepInEx;
+﻿// These are your imports, mostly you'll be needing these 5 for every plugin. Some will need more.
+
+using BepInEx;
 using BepInEx.Logging;
+using BepInEx.Configuration;
 using HarmonyLib;
 using static Obeliskial_Essentials.Essentials;
-using Obeliskial_Essentials;
-using System.IO;
-using UnityEngine;
 using System;
 
-namespace TheSubclass
-{
+
+// The Plugin csharp file is used to specify some general info about your plugin. and set up things for 
+
+
+// Make sure all your files have the same namespace and this namespace matches the RootNamespace in the .csproj file
+// All files that are in the same namespace are compiled together and can "see" each other more easily.
+
+namespace TheSubclass{
+    // These are used to create the actual plugin. If you don't need Obeliskial Essentials for your mod, 
+    // delete the BepInDependency and the associated code "RegisterMod()" below.
+
+    // If you have other dependencies, such as obeliskial content, make sure to include them here.
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-    [BepInDependency("com.stiffmeds.obeliskialessentials")]
-    [BepInDependency("com.stiffmeds.obeliskialcontent")]
-    [BepInProcess("AcrossTheObelisk.exe")]
+    [BepInDependency("com.stiffmeds.obeliskialessentials")] // this is the name of the .dll in the !libs folder.
+    [BepInProcess("AcrossTheObelisk.exe")] //Don't change this
+
+    // If PluginInfo isn't working, you are either:
+    // 1. Using BepInEx v6
+    // 2. Have an issue with your csproj file (not loading the analyzer or BepInEx appropriately)
+    // 3. You have an issue with your solution file (not referencing the correct csproj file)
+
+
     public class Plugin : BaseUnityPlugin
     {
+        
+        // If desired, you can create configs for users by creating a ConfigEntry object here, 
+        // Configs allows users to specify certain things about the mod. 
+        // The most common would be a flag to enable/disable portions of the mod or the entire mod.
+
+        // You can use: config = Config.Bind() to set the title, default value, and description of the config.
+        // It automatically creates the appropriate configs.
+        
+        public static ConfigEntry<bool> SampleBooleanConfig { get; set; }
+        public static ConfigEntry<int> SampleIntegerConfig { get; set; }
+
         internal int ModDate = int.Parse(DateTime.Today.ToString("yyyyMMdd"));
         private readonly Harmony harmony = new(PluginInfo.PLUGIN_GUID);
         internal static ManualLogSource Log;
 
-        public static string characterName = "<HeroName>";
-        public static string subclassName = "<Subclass>"; // needs caps
+        public static string debugBase = PluginInfo.PLUGIN_GUID;
 
         private void Awake()
         {
+
+            // The Logger will allow you to print things to the LogOutput (found in the BepInEx directory)
             Log = Logger;
             Log.LogInfo($"{PluginInfo.PLUGIN_GUID} {PluginInfo.PLUGIN_VERSION} has loaded!");
-            // register with Obeliskial Essentials
+            
+            // Sets the title, default values, and descriptions
+            SampleBooleanConfig = Config.Bind(new ConfigDefinition("Debug", "Name of Config"), true, new ConfigDescription("Description of Config"));
+            SampleIntegerConfig = Config.Bind(new ConfigDefinition("Debug", "Name of Config"), 3, new ConfigDescription("Description of Config)"));
+            
+
+            // Register with Obeliskial Essentials, delete this if you don't need it.
             RegisterMod(
                 _name: PluginInfo.PLUGIN_NAME,
                 _author: "binbin",
-                _description: "<Hero, The Subclass>.",
+                _description: "Sample Plugin",
                 _version: PluginInfo.PLUGIN_VERSION,
                 _date: ModDate,
-                _link: @"https://github.com/binbinmods/heronamesubclass",
-                _contentFolder: "<Hero>",
-                _type: ["content", "hero", "trait"]
+                _link: @"https://github.com/binbinmods/SampleCSharpWorkspace"
             );
-            // apply patches
+
+            // apply patches, this functionally runs all the code for Harmony, running your mod
             harmony.PatchAll();
         }
 
-        [HarmonyPatch]
-        internal class Patches
+
+        // These are some functions to make debugging a tiny bit easier.
+        internal static void LogDebug(string msg)
         {
-
-            [HarmonyPrefix]
-            [HarmonyPatch(typeof(EventData), "Init")]
-            public static void InitPrefix(ref Globals __instance)
-            {
-                // Do Not Change this for now`
-
-                //Plugin.Log.LogDebug("Binbin -- Attempting to add subclass to list for all events");
-
-                //Plugin.Log.LogDebug("Binbin -- After Adding List: " + string.Join(";", Globals.Instance.SubClass.Select(x => x.Key).ToArray()));
-                //Plugin.Log.LogDebug("Binbin -- medsSubClassesSource: " + string.Join(";", Content.medsSubClassesSource.Select(x => x.Key).ToArray()));
-                string p = Path.Combine(Paths.ConfigPath, "Obeliskial_importing", characterName, "subclass");
-                if (Directory.Exists(p))
-                {
-                    //Plugin.Log.LogDebug("Binbin -- Path: " + p);
-                    FileInfo[] medsFI = (new DirectoryInfo(Path.Combine(Paths.ConfigPath, "Obeliskial_importing", characterName, "subclass"))).GetFiles("*.json");
-                    foreach (FileInfo f in medsFI)
-                    {
-                        try
-                        {
-                            SubClassData subclass = Obeliskial_Content.DataTextConvert.ToData(JsonUtility.FromJson<SubClassDataText>(File.ReadAllText(f.ToString())));
-                            //Log.LogInfo("Binbin -- subclass to add : " + subclass.SubClassName);
-                            if (subclass != null && !Globals.Instance.SubClass.ContainsKey(subclass.SubClassName))
-                            {
-                                Globals.Instance.SubClass.Add(subclass.SubClassName.ToLower(), subclass);
-
-                                //Plugin.Log.LogDebug("Binbin -- Subclass Would be added: " + subclass.SubClassName);
-                            }
-                        }
-                        catch (Exception e) { Log.LogError("Binbin -- Error loading custom " + characterName + " subclass " + f.Name + ": " + e.Message); }
-                    }
-                }
-
-
-            }
-            [HarmonyPostfix]
-            [HarmonyPatch(typeof(EventData), "Init")]
-            public static void InitPostfix(ref Globals __instance)
-            {
-                // This prevents there from being the same class there multiple times leading to a base game error.
-
-                if (Globals.Instance.SubClass.ContainsKey(subclassName))
-                {
-                    Globals.Instance.SubClass.Remove(subclassName);
-                }
-            }
+            Log.LogDebug(debugBase + msg);
+        }
+        internal static void LogInfo(string msg)
+        {
+            Log.LogInfo(debugBase + msg);
+        }
+        internal static void LogError(string msg)
+        {
+            Log.LogError(debugBase + msg);
         }
     }
 }

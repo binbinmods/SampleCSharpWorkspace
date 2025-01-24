@@ -7,10 +7,12 @@ using HarmonyLib;
 using static Obeliskial_Essentials.Essentials;
 
 
-// The Plugin csharp file is used to 
+// The Plugin csharp file is used to specify some general info about your plugin. and set up things for 
 
 
 // Make sure all your files have the same namespace and this namespace matches the RootNamespace in the .csproj file
+// All files that are in the same namespace are compiled together and can "see" each other more easily.
+
 namespace SamplePlugin{
     // These are used to create the actual plugin. If you don't need Obeliskial Essentials for your mod, 
     // delete the BepInDependency and the associated code "RegisterMod()" below.
@@ -30,7 +32,10 @@ namespace SamplePlugin{
     {
         
         // If desired, you can create configs for users by creating a ConfigEntry object here, 
-        // and then use config = Config.Bind() to set the title, default value, and description of the config.
+        // Configs allows users to specify certain things about the mod. 
+        // The most common would be a flag to enable/disable portions of the mod or the entire mod.
+
+        // You can use: config = Config.Bind() to set the title, default value, and description of the config.
         // It automatically creates the appropriate configs.
         
         public static ConfigEntry<bool> SampleBooleanConfig { get; set; }
@@ -64,10 +69,12 @@ namespace SamplePlugin{
                 _link: @"https://github.com/binbinmods/SampleCSharpWorkspace"
             );
 
-            // apply patches
+            // apply patches, this functionally runs all the code for Harmony, running your mod
             harmony.PatchAll();
         }
 
+
+        // These are some functions to make debugging a tiny bit easier.
         internal static void LogDebug(string msg)
         {
             Log.LogDebug(debugBase + msg);
