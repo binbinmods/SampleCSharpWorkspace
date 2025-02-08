@@ -130,7 +130,7 @@ namespace TheSubclass
                     int amountToHeal = Mathf.RoundToInt(0.30f * _auxInt);
 
                     // I have already written a function that handles the healing part, so I'll just use that
-                    TraitHeal(ref _character, ref _target, amountToHeal, traitName);
+                    TraitHeal(ref _character, _target, amountToHeal, traitName);
                 }
             }
 

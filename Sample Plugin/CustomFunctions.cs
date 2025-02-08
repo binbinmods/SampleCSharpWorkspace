@@ -40,7 +40,7 @@ namespace SamplePlugin
         /// <param name="_target">Target to Heal</param>
         /// <param name="healAmount">Amount to Heal</param>
         /// <param name="traitName">Trait it is attributed to</param>
-        public static void TraitHeal(ref Character _character, ref Character _target, int healAmount, string traitName)
+        public static void TraitHeal(ref Character _character, Character _target, int healAmount, string traitName)
         {
             // Used to have a ref for _target. Need to make sure that it works without the ref
             int _hp = healAmount;
@@ -283,12 +283,12 @@ namespace SamplePlugin
         /// <param name="class1">Card Class that could be reduced</param>
         /// <param name="class2">Card Class that could be reduced</param>
         /// <param name="_trait">Trait this is attributable to</param>
-        public static void Duality(ref Character _character, ref CardData _castedCard, Enums.CardClass class1, Enums.CardClass class2, string _trait, int bonusActivations = 0)
+        public static void Duality(ref Character _character, ref CardData _castedCard, Enums.CardClass class1, Enums.CardClass class2, string _trait)
         {
             if (!((Object)MatchManager.Instance != (Object)null) || !((Object)_castedCard != (Object)null))
                 return;
             TraitData traitData = Globals.Instance.GetTraitData(_trait);
-            if (MatchManager.Instance.activatedTraits != null && MatchManager.Instance.activatedTraits.ContainsKey(_trait) && MatchManager.Instance.activatedTraits[_trait] > (traitData.TimesPerTurn - 1 + bonusActivations))
+            if (MatchManager.Instance.activatedTraits != null && MatchManager.Instance.activatedTraits.ContainsKey(_trait) && MatchManager.Instance.activatedTraits[_trait] > traitData.TimesPerTurn - 1)
                 return;
             for (int index1 = 0; index1 < 2; ++index1)
             {
@@ -339,7 +339,7 @@ namespace SamplePlugin
                     cardData1.EnergyReductionTemporal += num2;
                     MatchManager.Instance.GetCardFromTableByIndex(cardData1.InternalId).ShowEnergyModification(-num2);
                     MatchManager.Instance.UpdateHandCards();
-                    _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + traitData.TraitName) + TextChargesLeft(MatchManager.Instance.activatedTraits[_trait], traitData.TimesPerTurn + bonusActivations), Enums.CombatScrollEffectType.Trait);
+                    _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + traitData.TraitName) + TextChargesLeft(MatchManager.Instance.activatedTraits[_trait], traitData.TimesPerTurn), Enums.CombatScrollEffectType.Trait);
                     MatchManager.Instance.CreateLogCardModification(cardData1.InternalId, MatchManager.Instance.GetHero(_character.HeroIndex));
                     break;
                 }
@@ -355,12 +355,12 @@ namespace SamplePlugin
         /// <param name="whenYouPlayThis"> Card type to trigger the effect</param>
         /// <param name="amountToReduce"> Amount of energy reduction per time this triggers</param>
         /// <param name="_trait"> Trait this is attributed to</param>
-        public static void PermanentyReduceXWhenYouPlayY(ref Character _character, ref CardData _castedCard, Enums.CardType reduceThis, Enums.CardType whenYouPlayThis, int amountToReduce, string _trait, int bonusActivations = 0)
+        public static void PermanentyReduceXWhenYouPlayY(ref Character _character, ref CardData _castedCard, Enums.CardType reduceThis, Enums.CardType whenYouPlayThis, int amountToReduce, string _trait)
         {
             if (!((Object)MatchManager.Instance != (Object)null) || !((Object)_castedCard != (Object)null))
                 return;
             TraitData traitData = Globals.Instance.GetTraitData(_trait);
-            if (MatchManager.Instance.activatedTraits != null && MatchManager.Instance.activatedTraits.ContainsKey(_trait) && MatchManager.Instance.activatedTraits[_trait] > traitData.TimesPerTurn - 1 + bonusActivations)
+            if (MatchManager.Instance.activatedTraits != null && MatchManager.Instance.activatedTraits.ContainsKey(_trait) && MatchManager.Instance.activatedTraits[_trait] > traitData.TimesPerTurn - 1)
                 return;
 
             if (!_castedCard.GetCardTypes().Contains(whenYouPlayThis))
@@ -401,7 +401,7 @@ namespace SamplePlugin
             selectedCard.EnergyReductionPermanent += amountToReduce;
             MatchManager.Instance.GetCardFromTableByIndex(selectedCard.InternalId).ShowEnergyModification(-amountToReduce);
             MatchManager.Instance.UpdateHandCards();
-            _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + _trait) + TextChargesLeft(MatchManager.Instance.activatedTraits[_trait], traitData.TimesPerTurn + bonusActivations), Enums.CombatScrollEffectType.Trait);
+            _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + _trait) + TextChargesLeft(MatchManager.Instance.activatedTraits[_trait], traitData.TimesPerTurn), Enums.CombatScrollEffectType.Trait);
             MatchManager.Instance.CreateLogCardModification(selectedCard.InternalId, MatchManager.Instance.GetHero(_character.HeroIndex));
         }
 
@@ -867,30 +867,36 @@ namespace SamplePlugin
         /// <summary>
         /// Displays the remaining charges for a trait. Might lead to errors (isn't well protected). Common to play sound effects after.
         /// </summary>
-        /// <param name="_character">Character we displaying the charges for</param>
-        /// <param name="traitData">The Trait we are displaying charges for</param>
+        /// <param name="_character">Character we are checking if it has the trait</param>
+        /// <param name="traitData">The Trait we are checking</param>
 
-        public static void DisplayRemainingChargesForTrait(ref Character _character, TraitData traitData, int bonusActivation = 0)
+        public static void DisplayRemainingChargesForTrait(ref Character _character, TraitData traitData)
         {
             if (_character.HeroItem != null)
             {
-                _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + traitData.TraitName, "") + TextChargesLeft(MatchManager.Instance.activatedTraits[traitData.TraitName], traitData.TimesPerTurn + bonusActivation), Enums.CombatScrollEffectType.Trait);
+                _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + traitData.TraitName, "") + TextChargesLeft(MatchManager.Instance.activatedTraits[traitData.TraitName], traitData.TimesPerTurn), Enums.CombatScrollEffectType.Trait);
             }
         }
 
         /// <summary>
-        /// Displays the remaining charges for a trait. Might lead to errors (isn't well protected). Common to play sound effects after.
+        /// Places a little text scroll of the trait's name when a character's trait activates.
         /// </summary>
-        /// <param name="_character">Character we displaying the charges for</param>
-        /// <param name="traitId">The ID of the Trait we are displaying</param>
-
-        public static void DisplayRemainingChargesForTrait(ref Character _character, string traitId, int bonusActivation = 0)
+        /// <param name="_character"> Character the trait comes from</param>
+        /// <param name="traitData"> Trait to display the name of</param>
+        public static void DisplayTraitScroll(ref Character _character, TraitData traitData)
         {
-            TraitData traitData = Globals.Instance.GetTraitData(traitId);
-            if (_character.HeroItem != null)
-            {
-                _character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_" + traitData.TraitName, "") + TextChargesLeft(MatchManager.Instance.activatedTraits[traitData.TraitName], traitData.TimesPerTurn + bonusActivation), Enums.CombatScrollEffectType.Trait);
-            }
+            _character.HeroItem?.ScrollCombatText(Texts.Instance.GetText("traits_" + traitData.TraitName, ""), Enums.CombatScrollEffectType.Trait);
+        }
+
+        /// <summary>
+        /// Places a little text scroll of the trait's name when a character's trait activates.
+        /// </summary>
+        /// <param name="_character"> Character the trait comes from</param>
+        /// <param name="traitName"> Name to Display</param>
+
+        public static void DisplayTraitScroll(ref Character _character, string traitName)
+        {
+            _character.HeroItem?.ScrollCombatText(Texts.Instance.GetText("traits_" + traitName, ""), Enums.CombatScrollEffectType.Trait);
         }
 
         /// <summary>
@@ -928,7 +934,7 @@ namespace SamplePlugin
         /// Checks to see if you can increment a Trait's activations
         /// </summary>
         /// <param name="traitData">The Trait we are checking</param>
-        public static bool CanIncrementTraitActivations(TraitData traitData, int bonusActivations = 1)
+        public static bool CanIncrementTraitActivations(TraitData traitData, int bonusActivations = 0)
         {
             LogDebug("canIncrementTraitActivations");
             if (traitData == null)
@@ -1306,27 +1312,39 @@ namespace SamplePlugin
         /// <param name="currentCharacter">character to reduce the cards for. If null, gets the current active hero.</param>
         /// <param name="amountToReduce">Amount to reduce the card's cost by</param>
         /// <param name="isPermanent">If true, makes the reduction permanent.</param>
-        public static void ReduceCardCost(ref CardData cardData, Character currentCharacter= null, int amountToReduce = 1, bool isPermanent = false)
+        public static void ReduceCardCost(ref CardData cardData, Character currentCharacter = null, int amountToReduce = 1, bool isPermanent = false)
         {
-            if (MatchManager.Instance == null)
+            if (MatchManager.Instance == null || cardData == null)
             {
-                LogError("Null MatchManager");
+                LogError("Null MatchManager/card");
                 return;
             }
 
+            LogDebug("Reducing card Cost");
             currentCharacter ??= MatchManager.Instance.GetHeroHeroActive();
+
+            if (currentCharacter == null)
+            {
+                LogError("Null Current Character");
+                return;
+            }
+
             if (isPermanent)
             {
+                LogDebug("Reducing card Cost - permanent");
                 cardData.EnergyReductionPermanent += amountToReduce;
             }
             else
             {
+                LogDebug("Reducing card Cost - temporary");
                 cardData.EnergyReductionTemporal += amountToReduce;
             }
+            LogDebug("Reducing card Cost - updates");
             MatchManager.Instance.GetCardFromTableByIndex(cardData.InternalId).ShowEnergyModification(-amountToReduce);
             MatchManager.Instance.UpdateHandCards();
             // this.character.HeroItem.ScrollCombatText(Texts.Instance.GetText("traits_Scholar") + TextChargesLeft(MatchManager.Instance.activatedTraits[nameof (scholar)], traitData.TimesPerTurn), Enums.CombatScrollEffectType.Trait);
             MatchManager.Instance.CreateLogCardModification(cardData.InternalId, MatchManager.Instance.GetHero(currentCharacter.HeroIndex));
+            LogDebug("Reducing card Cost - END");
         }
 
 
@@ -1336,7 +1354,7 @@ namespace SamplePlugin
         /// <param name="heroHand"> The hero's hand. If null, gets the current active hero's hand.</param>
         /// <param name="cardType">The cardType you are looking for. Use None to specify any card.</param>
         /// <returns>A random card with the highest cost of cardType. Returns null if card is not found.</returns>
-        public static CardData GetRandomHighestCostCard(Enums.CardType cardType, List<string> heroHand= null)
+        public static CardData GetRandomHighestCostCard(Enums.CardType cardType, List<string> heroHand = null)
         {
             if (MatchManager.Instance == null)
             {
@@ -1346,11 +1364,11 @@ namespace SamplePlugin
             heroHand ??= MatchManager.Instance.GetHeroHand(MatchManager.Instance.GetHeroActive());
 
             int num1 = 0;
-            List<CardData> cardDataList = new(); 
+            List<CardData> cardDataList = new();
             for (int index = 0; index < heroHand.Count; ++index)
             {
                 CardData cardData = MatchManager.Instance.GetCardData(heroHand[index]);
-                if ((Object)cardData != (Object)null && cardData.GetCardTypes().Contains(cardType) && cardData.GetCardFinalCost() > num1)
+                if ((Object)cardData != (Object)null && (cardData.GetCardTypes().Contains(cardType)||cardType==Enums.CardType.None) && cardData.GetCardFinalCost() > num1)
                     num1 = cardData.GetCardFinalCost();
             }
             if (num1 <= 0)
@@ -1358,7 +1376,7 @@ namespace SamplePlugin
             for (int index = 0; index < heroHand.Count; ++index)
             {
                 CardData cardData = MatchManager.Instance.GetCardData(heroHand[index]);
-                if ((Object)cardData != (Object)null && cardData.GetCardTypes().Contains(cardType) && cardData.GetCardFinalCost() >= num1)
+                if ((Object)cardData != (Object)null && (cardData.GetCardTypes().Contains(cardType)||cardType==Enums.CardType.None) && cardData.GetCardFinalCost() >= num1)
                     cardDataList.Add(cardData);
             }
             if (cardDataList.Count <= 0)
@@ -1385,7 +1403,7 @@ namespace SamplePlugin
             for (int index = 0; index < heroHand.Count; ++index)
             {
                 CardData cardData = MatchManager.Instance.GetCardData(heroHand[index]);
-                if ((UnityEngine.Object)cardData != (UnityEngine.Object)null && cardData.GetCardFinalCost() > 0 && (cardData.GetCardTypes().Contains(cardType)||cardType==Enums.CardType.None) && cardData.GetCardFinalCost() >= equalOrAboveCertainCost && cardData.GetCardFinalCost() <= lessThanOrEqualToThisCost)
+                if ((UnityEngine.Object)cardData != (UnityEngine.Object)null && cardData.GetCardFinalCost() > 0 && (cardData.GetCardTypes().Contains(cardType) || cardType == Enums.CardType.None) && cardData.GetCardFinalCost() >= equalOrAboveCertainCost && cardData.GetCardFinalCost() <= lessThanOrEqualToThisCost)
                     cardDataList.Add(cardData);
             }
             return cardDataList;
@@ -1407,7 +1425,7 @@ namespace SamplePlugin
             for (int index = 0; index < heroHand.Count; ++index)
             {
                 CardData cardData = MatchManager.Instance.GetCardData(heroHand[index]);
-                if ((UnityEngine.Object)cardData != (UnityEngine.Object)null && cardData.GetCardFinalCost() > 0 && (cardData.GetCardTypes().Contains(cardType)||cardType==Enums.CardType.None) && cardData.GetCardFinalCost() >= equalOrAboveCertainCost && cardData.GetCardFinalCost() <= lessThanOrEqualToThisCost)
+                if ((UnityEngine.Object)cardData != (UnityEngine.Object)null && cardData.GetCardFinalCost() > 0 && (cardData.GetCardTypes().Contains(cardType) || cardType == Enums.CardType.None) && cardData.GetCardFinalCost() >= equalOrAboveCertainCost && cardData.GetCardFinalCost() <= lessThanOrEqualToThisCost)
                     cardDataList.Add(cardData);
             }
             return cardDataList;
