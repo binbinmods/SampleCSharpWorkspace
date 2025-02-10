@@ -5,6 +5,7 @@ using BepInEx.Logging;
 using BepInEx.Configuration;
 using HarmonyLib;
 using static Obeliskial_Essentials.Essentials;
+using System;
 
 
 // The Plugin csharp file is used to specify some general info about your plugin. and set up things for 
@@ -13,7 +14,7 @@ using static Obeliskial_Essentials.Essentials;
 // Make sure all your files have the same namespace and this namespace matches the RootNamespace in the .csproj file
 // All files that are in the same namespace are compiled together and can "see" each other more easily.
 
-namespace SamplePlugin{
+namespace TheSubclass{
     // These are used to create the actual plugin. If you don't need Obeliskial Essentials for your mod, 
     // delete the BepInDependency and the associated code "RegisterMod()" below.
 
@@ -40,8 +41,9 @@ namespace SamplePlugin{
         
         public static ConfigEntry<bool> SampleBooleanConfig { get; set; }
         public static ConfigEntry<int> SampleIntegerConfig { get; set; }
+        public static ConfigEntry<bool> EnableDebugging { get; set; }
 
-        internal const int ModDate = int.Parse(DateTime.Today.ToString("yyyyMMdd"));;
+        internal int ModDate = int.Parse(DateTime.Today.ToString("yyyyMMdd"));
         private readonly Harmony harmony = new(PluginInfo.PLUGIN_GUID);
         internal static ManualLogSource Log;
 
@@ -55,8 +57,10 @@ namespace SamplePlugin{
             Log.LogInfo($"{PluginInfo.PLUGIN_GUID} {PluginInfo.PLUGIN_VERSION} has loaded!");
             
             // Sets the title, default values, and descriptions
-            SampleBooleanConfig = Config.Bind(new ConfigDefinition("Debug", "Name of Config"), true, new ConfigDescription("Description of Config"));
-            SampleIntegerConfig = Config.Bind(new ConfigDefinition("Debug", "Name of Config"), 3, new ConfigDescription("Description of Config)"));
+            SampleBooleanConfig = Config.Bind(new ConfigDefinition("Mod Name", "Name of Config"), true, new ConfigDescription("Description of Config"));
+            SampleIntegerConfig = Config.Bind(new ConfigDefinition("Mod Name", "Name of Config"), 3, new ConfigDescription("Description of Config)"));
+            EnableDebugging = Config.Bind(new ConfigDefinition(PluginInfo.PLUGIN_NAME, "Enable Debugging"), true, new ConfigDescription("Enables debugging logs."));
+
             
 
             // Register with Obeliskial Essentials, delete this if you don't need it.
@@ -77,7 +81,11 @@ namespace SamplePlugin{
         // These are some functions to make debugging a tiny bit easier.
         internal static void LogDebug(string msg)
         {
-            Log.LogDebug(debugBase + msg);
+            if (EnableDebugging.Value)
+            {
+                Log.LogDebug(debugBase + msg);
+            }
+            
         }
         internal static void LogInfo(string msg)
         {
@@ -86,6 +94,5 @@ namespace SamplePlugin{
         internal static void LogError(string msg)
         {
             Log.LogError(debugBase + msg);
-        }
-    }
+        }    }
 }

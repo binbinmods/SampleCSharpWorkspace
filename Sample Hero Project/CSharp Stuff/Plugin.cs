@@ -41,6 +41,7 @@ namespace TheSubclass{
         
         public static ConfigEntry<bool> SampleBooleanConfig { get; set; }
         public static ConfigEntry<int> SampleIntegerConfig { get; set; }
+        public static ConfigEntry<bool> EnableDebugging { get; set; }
 
         internal int ModDate = int.Parse(DateTime.Today.ToString("yyyyMMdd"));
         private readonly Harmony harmony = new(PluginInfo.PLUGIN_GUID);
@@ -56,8 +57,10 @@ namespace TheSubclass{
             Log.LogInfo($"{PluginInfo.PLUGIN_GUID} {PluginInfo.PLUGIN_VERSION} has loaded!");
             
             // Sets the title, default values, and descriptions
-            SampleBooleanConfig = Config.Bind(new ConfigDefinition("Debug", "Name of Config"), true, new ConfigDescription("Description of Config"));
-            SampleIntegerConfig = Config.Bind(new ConfigDefinition("Debug", "Name of Config"), 3, new ConfigDescription("Description of Config)"));
+            SampleBooleanConfig = Config.Bind(new ConfigDefinition("Mod Name", "Name of Config"), true, new ConfigDescription("Description of Config"));
+            SampleIntegerConfig = Config.Bind(new ConfigDefinition("Mod Name", "Name of Config"), 3, new ConfigDescription("Description of Config)"));
+            EnableDebugging = Config.Bind(new ConfigDefinition(PluginInfo.PLUGIN_NAME, "Enable Debugging"), true, new ConfigDescription("Enables debugging logs."));
+
             
 
             // Register with Obeliskial Essentials, delete this if you don't need it.
@@ -78,7 +81,11 @@ namespace TheSubclass{
         // These are some functions to make debugging a tiny bit easier.
         internal static void LogDebug(string msg)
         {
-            Log.LogDebug(debugBase + msg);
+            if (EnableDebugging.Value)
+            {
+                Log.LogDebug(debugBase + msg);
+            }
+            
         }
         internal static void LogInfo(string msg)
         {
@@ -87,6 +94,5 @@ namespace TheSubclass{
         internal static void LogError(string msg)
         {
             Log.LogError(debugBase + msg);
-        }
-    }
+        }    }
 }
