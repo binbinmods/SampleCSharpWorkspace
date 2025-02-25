@@ -4,7 +4,7 @@ using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Configuration;
 using HarmonyLib;
-using static Obeliskial_Essentials.Essentials;
+// using static Obeliskial_Essentials.Essentials;
 using System;
 
 
@@ -20,7 +20,7 @@ namespace TheSubclass{
 
     // If you have other dependencies, such as obeliskial content, make sure to include them here.
     [BepInPlugin(PluginInfo.PLUGIN_GUID, PluginInfo.PLUGIN_NAME, PluginInfo.PLUGIN_VERSION)]
-    [BepInDependency("com.stiffmeds.obeliskialessentials")] // this is the name of the .dll in the !libs folder.
+    // [BepInDependency("com.stiffmeds.obeliskialessentials")] // this is the name of the .dll in the !libs folder.
     [BepInProcess("AcrossTheObelisk.exe")] //Don't change this
 
     // If PluginInfo isn't working, you are either:
@@ -64,14 +64,14 @@ namespace TheSubclass{
             
 
             // Register with Obeliskial Essentials, delete this if you don't need it.
-            RegisterMod(
-                _name: PluginInfo.PLUGIN_NAME,
-                _author: "binbin",
-                _description: "Sample Plugin",
-                _version: PluginInfo.PLUGIN_VERSION,
-                _date: ModDate,
-                _link: @"https://github.com/binbinmods/SampleCSharpWorkspace"
-            );
+            // RegisterMod(
+            //     _name: PluginInfo.PLUGIN_NAME,
+            //     _author: "binbin",
+            //     _description: "Sample Plugin",
+            //     _version: PluginInfo.PLUGIN_VERSION,
+            //     _date: ModDate,
+            //     _link: @"https://github.com/binbinmods/SampleCSharpWorkspace"
+            // );
 
             // apply patches, this functionally runs all the code for Harmony, running your mod
             harmony.PatchAll();

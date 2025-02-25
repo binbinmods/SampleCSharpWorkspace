@@ -1,0 +1,9 @@
+{
+    "name": "Enter_Name_Separated_By_Underscores",
+    "version_number": "1.0.0",
+    "website_url": "https://github.com/thunderstore-io",
+    "description": "Enter Description Here.",
+    "dependencies": [
+        "meds-Obeliskial_Content-1.3.0"
+    ]
+}

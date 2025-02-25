@@ -15,7 +15,9 @@
     <RootNamespace>SamplePlugin</RootNamespace>
   </PropertyGroup>
   
-  <ItemGroup>
+
+
+    <ItemGroup>
     <PackageReference Include="BepInEx.Analyzers" Version="1.*" PrivateAssets="all" />
     <PackageReference Include="BepInEx.Core" Version="5.*" />
     <PackageReference Include="BepInEx.PluginInfoProps" Version="1.*" />
@@ -27,20 +29,25 @@
   </ItemGroup>
 
 
-    <ItemGroup>
+  <ItemGroup>
     <Reference Include="0Harmony">
       <HintPath>../../!libs/0Harmony.dll</HintPath>
     </Reference>
     <Reference Include="Assembly-CSharp">
       <HintPath>../../!libs/Assembly-CSharp.dll</HintPath>
     </Reference>
-    <Reference Include="com.stiffmeds.obeliskialessentials">
-      <HintPath>../../!libs/Obeliskial_Essentials.dll</HintPath>
+    <!-- <Reference Include="com.stiffmeds.obeliskialessentials">
+      <HintPath>../../!libs/com.stiffmeds.obeliskialessentials.dll</HintPath>
     </Reference>
     <Reference Include="com.stiffmeds.obeliskialcontent">
-      <HintPath>../../!libs/Obeliskial_Content.dll</HintPath>
-    </Reference>
+      <HintPath>../../!libs/com.stiffmeds.obeliskialcontent.dll</HintPath>
+    </Reference> -->
   </ItemGroup>
 
+  <Target Name="PostBuild" AfterTargets="PostBuildEvent">
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="../../../plugins" />
+    <Copy SourceFiles="$(TargetPath)" DestinationFolder="<ModName>/BepInEx/plugins" />
+    <!-- <Exec Command="/usr/bin/python3 &quot;$(ProjectDir)ship_mod.py&quot;" /> -->
 
+  </Target>
 </Project>

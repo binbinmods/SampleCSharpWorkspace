@@ -2,7 +2,7 @@ using BepInEx;
 using BepInEx.Logging;
 using BepInEx.Configuration;
 using HarmonyLib;
-using static Obeliskial_Essentials.Essentials;
+// using static Obeliskial_Essentials.Essentials;
 using System;
 using static SamplePlugin.Plugin;
 using static SamplePlugin.CustomFunctions;
